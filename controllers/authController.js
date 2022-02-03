@@ -1,18 +1,8 @@
 const User = require("../models/User");
 const Role = require("../models/Role");
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 const { validationResult } = require("express-validator");
-
-const generateAccessToken = (id, username, email, roles) => {
-  const payload = {
-    id,
-    username,
-    email,
-    roles,
-  };
-  return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "24h" });
-};
+const { generateAccessToken } = require("../services/token.service");
 
 class authController {
   async signup(req, res) {
@@ -30,14 +20,27 @@ class authController {
       }
       const hashPassword = bcrypt.hashSync(password, 7);
       const userRole = await Role.findOne({ value: "USER" });
-      const newUser = new User({
+      const createNewUser = new User({
         username: email,
         email: email,
         password: hashPassword,
         roles: userRole.value,
       });
-      await newUser.save();
-      res.json("user successfully registered");
+
+      const newUser = await createNewUser.save();
+
+      console.log(generateAccessToken);
+      const token = generateAccessToken(
+        newUser._id,
+        newUser.email,
+        newUser.roles
+      );
+
+      return res.json({
+        message: "user successfully registered",
+        token,
+        user: { _id: newUser._id, email: newUser.email, roles: newUser.roles },
+      });
     } catch (e) {
       console.log(e);
       res.status(400).json({ message: "registration error", error: e });
@@ -56,10 +59,10 @@ class authController {
         return res.status(400).json({ message: "wrong password entered" });
       }
       const token = generateAccessToken(user._id, user.email, user.roles);
-      res.cookie("token", token, {
-        maxAge: 1 * 24 * 60 * 60 * 1000,
-        httpOnly: true,
-      });
+      // res.cookie("token", token, {
+      //   maxAge: 1 * 24 * 60 * 60 * 1000,
+      //   httpOnly: true,
+      // });
       return res.json({
         token,
         user: { _id: user._id, email, roles: user.roles },
