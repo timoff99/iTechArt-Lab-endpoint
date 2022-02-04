@@ -13,21 +13,22 @@ class authController {
       }
       const { email, password } = req.body;
       const newUser = await authService.signup(email, password, res);
+      console.log(newUser);
 
       return res.json(newUser);
     } catch (e) {
-      res.status(400).json({ message: "registration error", error: e });
+      res.status(400).json({ message: e.message });
     }
   }
 
   async login(req, res) {
     try {
       const { email, password } = req.body;
-      const userData = await authService.login(email, password, res);
-
+      const userData = await authService.login(email, password);
+      console.log(userData);
       return res.json(userData);
     } catch (e) {
-      res.status(400).json({ message: "login error" });
+      res.status(400).json({ message: e.message });
     }
   }
 
