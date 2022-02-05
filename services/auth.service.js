@@ -4,7 +4,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 class AuthService {
-  async signup(email, password, res) {
+  async signup(email, password) {
     const tryToFindUser = await User.findOne({ email });
     if (tryToFindUser) {
       throw new Error("user exists");
@@ -15,7 +15,7 @@ class AuthService {
       username: "user",
       email: email,
       password: hashPassword,
-      roles: userRole.value,
+      roles: userRole,
     });
 
     const newUser = await createNewUser.save();
@@ -28,18 +28,11 @@ class AuthService {
     );
 
     return {
-      message: "user successfully registered",
       token,
-      user: {
-        _id: newUser._id,
-        username: newUser.username,
-        email: newUser.email,
-        roles: newUser.roles,
-      },
     };
   }
   async login(email, password) {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).populate('roles');
     if (!user) {
       throw new Error(`email ${email} not found`);
     }
@@ -54,18 +47,11 @@ class AuthService {
       user.roles
     );
     return {
-      message: "user successfully login",
       token,
-      user: {
-        _id: user._id,
-        username: user.username,
-        email,
-        roles: user.roles,
-      },
     };
   }
 
-  private generateAccessToken (id, username, email, roles) {
+  generateAccessToken (id, username, email, roles) {
     const payload = {
       id,
       username,

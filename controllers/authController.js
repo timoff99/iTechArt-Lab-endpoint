@@ -12,7 +12,7 @@ class authController {
         });
       }
       const { email, password } = req.body;
-      const newUser = await authService.signup(email, password, res);
+      const newUser = await authService.signup(email, password);
       console.log(newUser);
 
       return res.json(newUser);
