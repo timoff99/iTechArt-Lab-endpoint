@@ -1,7 +1,7 @@
 const User = require("../models/User");
 const Role = require("../models/Role");
 const bcrypt = require("bcryptjs");
-const { generateAccessToken } = require("../services/token.service");
+const jwt = require("jsonwebtoken");
 
 class AuthService {
   async signup(email, password, res) {
@@ -20,7 +20,7 @@ class AuthService {
 
     const newUser = await createNewUser.save();
 
-    const token = generateAccessToken(
+    const token = this.generateAccessToken(
       newUser._id,
       newUser.username,
       newUser.email,
@@ -47,7 +47,7 @@ class AuthService {
     if (!validPassword) {
       throw new Error("wrong password entered");
     }
-    const token = generateAccessToken(
+    const token = this.generateAccessToken(
       user._id,
       user.username,
       user.email,
@@ -63,6 +63,16 @@ class AuthService {
         roles: user.roles,
       },
     };
+  }
+
+  private generateAccessToken (id, username, email, roles) {
+    const payload = {
+      id,
+      username,
+      email,
+      roles,
+    };
+    return jwt.sign(payload, process.env.JWT_SECRET, {expiresIn: "24h"});
   }
 }
 module.exports = new AuthService();
