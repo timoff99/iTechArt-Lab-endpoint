@@ -2,7 +2,7 @@ const User = require("../models/User");
 const { validationResult } = require("express-validator");
 const authService = require("../services/auth.service");
 
-class authController {
+class AuthController {
   async signup(req, res) {
     try {
       const errors = validationResult(req, res);
@@ -13,8 +13,6 @@ class authController {
       }
       const { email, password } = req.body;
       const newUser = await authService.signup(email, password);
-      console.log(newUser);
-
       return res.json(newUser);
     } catch (e) {
       res.status(400).json({ message: e.message });
@@ -25,7 +23,6 @@ class authController {
     try {
       const { email, password } = req.body;
       const userData = await authService.login(email, password);
-      console.log(userData);
       return res.json(userData);
     } catch (e) {
       res.status(400).json({ message: e.message });
@@ -38,20 +35,9 @@ class authController {
       res.clearCookie("token");
       return res.json({ message: "token deleted", token });
     } catch (e) {
-      console.log(e);
       res.status(400).json({ message: "logout error" });
-    }
-  }
-
-  async getUsers(req, res) {
-    try {
-      const user = await User.find();
-      res.send(user);
-    } catch (e) {
-      res.status(404);
-      res.send({ error: "getUsers error" });
     }
   }
 }
 
-module.exports = new authController();
+module.exports = new AuthController();

@@ -31,8 +31,9 @@ class AuthService {
       token,
     };
   }
+
   async login(email, password) {
-    const user = await User.findOne({ email }).populate('roles');
+    const user = await User.findOne({ email }).populate("roles");
     if (!user) {
       throw new Error(`email ${email} not found`);
     }
@@ -51,14 +52,14 @@ class AuthService {
     };
   }
 
-  generateAccessToken (id, username, email, roles) {
+  generateAccessToken(id, username, email, roles) {
     const payload = {
       id,
       username,
       email,
       roles,
     };
-    return jwt.sign(payload, process.env.JWT_SECRET, {expiresIn: "24h"});
+    return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "24h" });
   }
 }
 module.exports = new AuthService();
