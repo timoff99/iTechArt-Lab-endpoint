@@ -19,6 +19,7 @@
   "homepage": "https://github.com/timoff99/iTechArt-Lab-endpoint#readme",
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "cloudinary": "^1.28.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^15.0.0",
@@ -26,6 +27,7 @@
     "express-validator": "^6.14.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.1.8",
+    "multer": "^1.4.4",
     "nodemon": "^2.0.15"
   }
 }

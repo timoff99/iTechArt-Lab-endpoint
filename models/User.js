@@ -5,6 +5,8 @@ const UserSchema = new Schema({
   password: { type: String, require: true },
   username: { type: String },
   roles: { type: Types.ObjectId, ref: "Role" },
+  image: { type: String },
+  cloudinary_id: { type: String },
 });
 
 module.exports = model("User", UserSchema);
