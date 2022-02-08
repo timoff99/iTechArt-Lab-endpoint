@@ -25,10 +25,50 @@ class CookBookController {
     }
   }
 
-  async getCookBook(req, res) {
+  async getAllCookBooks(req, res) {
     try {
       const cookBook = await CookBook.find();
       res.json(cookBook);
+    } catch (e) {
+      return res.status(400).json({
+        message: e.message,
+      });
+    }
+  }
+
+  async getUserCookBooks(req, res) {
+    try {
+      const cookBook = await CookBook.find({ user_id: req.user.id });
+      res.json(cookBook);
+    } catch (e) {
+      return res.status(400).json({
+        message: e.message,
+      });
+    }
+  }
+
+  async getCookBook(req, res) {
+    try {
+      const cookBook = await CookBook.findById(req.params.id);
+      res.json(cookBook);
+    } catch (e) {
+      return res.status(400).json({
+        message: e.message,
+      });
+    }
+  }
+
+  async updateCookBook(req, res) {
+    try {
+      const cookBook = await CookBook.findById(req.params.id);
+      await cloudinary.uploader.destroy(cookBook.cloudinary_id);
+      const result = await cloudinary.uploader.upload(req.file.path);
+      const updateCookBook = await cookBookService.updateCookBook(
+        cookBook,
+        result,
+        req
+      );
+      res.json(updateCookBook);
     } catch (e) {
       return res.status(400).json({
         message: e.message,

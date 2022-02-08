@@ -26,10 +26,50 @@ class RecipeController {
     }
   }
 
-  async getRecipes(req, res) {
+  async getAllRecipes(req, res) {
+    try {
+      const recipes = await Recipe.find();
+      res.json(recipes);
+    } catch (e) {
+      return res.status(400).json({
+        message: e.message,
+      });
+    }
+  }
+
+  async getUserRecipes(req, res) {
     try {
       const recipes = await Recipe.find({ user_id: req.user.id });
       res.json(recipes);
+    } catch (e) {
+      return res.status(400).json({
+        message: e.message,
+      });
+    }
+  }
+
+  async getRecipe(req, res) {
+    try {
+      const recipes = await Recipe.findById(req.params.id);
+      res.json(recipes);
+    } catch (e) {
+      return res.status(400).json({
+        message: e.message,
+      });
+    }
+  }
+
+  async updateRecipe(req, res) {
+    try {
+      const recipes = await Recipe.findById(req.params.id);
+      await cloudinary.uploader.destroy(recipes.cloudinary_id);
+      const result = await cloudinary.uploader.upload(req.file.path);
+      const updateRecipe = await recipeService.updateRecipe(
+        recipes,
+        result,
+        req
+      );
+      res.json(updateRecipe);
     } catch (e) {
       return res.status(400).json({
         message: e.message,
