@@ -2,11 +2,20 @@ const CookBook = require("../models/CookBook");
 const cloudinary = require("../utils/cloudinary");
 
 class CookBookService {
-  async addCookBook(title, description, secure_url, public_id, recipes, id) {
+  async addCookBook(
+    title,
+    description,
+    username,
+    secure_url,
+    public_id,
+    recipes,
+    id
+  ) {
     try {
       const cookBook = new CookBook({
         title,
         description,
+        author: username,
         image: secure_url,
         cloudinary_id: public_id,
         recipes,

@@ -5,13 +5,13 @@ const cloudinary = require("../utils/cloudinary");
 class CookBookController {
   async addCookBook(req, res) {
     try {
-      const { title, description, recipes } = req.body;
-      const { id } = req.user;
-      const result = await cloudinary.uploader.upload(req.file.path);
-      const { secure_url, public_id } = result;
+      const { title, description, recipes, image } = req.body;
+      const { id, username } = req.user;
+      const { secure_url, public_id } = image;
       const cookBook = await cookBookService.addCookBook(
         title,
         description,
+        username,
         secure_url,
         public_id,
         recipes,
@@ -49,7 +49,9 @@ class CookBookController {
 
   async getCookBook(req, res) {
     try {
-      const cookBook = await CookBook.findById(req.params.id);
+      const cookBook = await CookBook.findById(req.query._id).populate(
+        "recipes"
+      );
       res.json(cookBook);
     } catch (e) {
       return res.status(400).json({
@@ -59,8 +61,9 @@ class CookBookController {
   }
 
   async updateCookBook(req, res) {
+    // ?????
     try {
-      const cookBook = await CookBook.findById(req.params.id);
+      const cookBook = await CookBook.findById(req.body._id);
       await cloudinary.uploader.destroy(cookBook.cloudinary_id);
       const result = await cloudinary.uploader.upload(req.file.path);
       const updateCookBook = await cookBookService.updateCookBook(
@@ -78,7 +81,7 @@ class CookBookController {
 
   async deleteCookBook(req, res) {
     try {
-      const cookBook = await CookBook.findById(req.params.id);
+      const cookBook = await CookBook.findById(req.body.id);
       const deletedCookBook = await cookBookService.deleteCookBook(cookBook);
       res.json(deletedCookBook);
     } catch (e) {

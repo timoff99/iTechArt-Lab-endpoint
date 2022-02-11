@@ -7,6 +7,7 @@ class RecipeService {
     description,
     ingredients,
     status,
+    username,
     secure_url,
     public_id,
     id
@@ -15,6 +16,7 @@ class RecipeService {
       const recipe = new Recipe({
         title,
         description,
+        author: username,
         ingredients,
         status,
         image: secure_url,
@@ -22,6 +24,18 @@ class RecipeService {
         user_id: id,
       });
       return await recipe.save();
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async updateRecipeCookBookId(ids, cookbook_id) {
+    try {
+      const updateRecipe = await Recipe.updateMany(
+        { _id: { $in: [ids] } }, // эт ж массив, может просто ids, без []
+        { $set: { cookbook_id: cookbook_id } }
+      );
+      return updateRecipe;
     } catch (err) {
       console.log(err);
     }
