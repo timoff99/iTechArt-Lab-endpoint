@@ -3,15 +3,11 @@ const { Schema, model, Types } = require("mongoose");
 const RecipeSchema = new Schema({
   title: { type: String },
   description: { type: String },
-  ingredients: {
-    ingredient: [{ type: String, default: null }],
-  },
-  steps: {
-    step: [{ type: String, default: null }],
-  },
+  ingredients: [{ type: String, default: "milk" }],
+  steps: [{ type: String, default: "add milk" }],
   author: { type: String },
   views: { type: Number, default: "11999" },
-  likes: { type: Number, default: "499" },
+  likes: [{ type: Types.ObjectId, ref: "User", default: [1] }],
   comments: {
     count: { type: Number, default: "12" },
     message: [{ author: String, text: String, date: String, avatar: Buffer }],

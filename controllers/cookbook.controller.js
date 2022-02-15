@@ -60,6 +60,41 @@ class CookBookController {
     }
   }
 
+  async updateCookBookViews(req, res) {
+    try {
+      //lol
+      const { _id } = req.body;
+      const updatedCookBook = await CookBook.findByIdAndUpdate(
+        _id,
+        { $inc: { views: 1 } },
+        { new: true }
+      );
+      res.json(updatedCookBook);
+    } catch (e) {
+      return res.status(400).json({
+        message: e.message,
+      });
+    }
+  }
+
+  async updateCookBookLikes(req, res) {
+    try {
+      const { id } = req.user;
+      const { _id } = req.body;
+      const checkUserLike = await CookBook.find({ _id }).exists("likes", true);
+      const updatedCookBook = await CookBook.findByIdAndUpdate(
+        _id,
+        { $inc: { views: 1 } },
+        { new: true }
+      );
+      res.json(updatedCookBook);
+    } catch (e) {
+      return res.status(400).json({
+        message: e.message,
+      });
+    }
+  }
+
   async updateCookBook(req, res) {
     // ?????
     try {

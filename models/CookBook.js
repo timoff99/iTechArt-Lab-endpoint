@@ -5,7 +5,7 @@ const CookBookSchema = new Schema({
   description: { type: String },
   author: { type: String },
   views: { type: Number, default: "12000" },
-  likes: { type: Number, default: "499" },
+  likes: [{ type: Types.ObjectId, ref: "User", default: [1] }],
   comments: {
     count: { type: Number, default: "12" },
     message: [{ author: String, text: String, date: String, avatar: Buffer }],

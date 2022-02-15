@@ -11,6 +11,7 @@ router.get("/get", controller.getRecipe);
 router.get("/get-recipe-without-cookbook", controller.getRecipeWithoutCookBook);
 router.put("/update-recipe-cookbookid", controller.updateRecipeCookBookId);
 router.put("/update", controller.updateRecipe);
+router.put("/update-views", controller.updateRecipeViews);
 router.delete("/delete", controller.deleteRecipes);
 
 module.exports = router;

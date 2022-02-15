@@ -9,6 +9,7 @@ router.get("/get-all", controller.getAllCookBooks);
 router.get("/get-user-cookbooks", controller.getUserCookBooks);
 router.get("/get", controller.getCookBook);
 router.put("/update", controller.updateCookBook);
+router.put("/update-views", controller.updateCookBookViews);
 router.delete("/delete", controller.deleteCookBook);
 
 module.exports = router;
