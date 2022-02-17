@@ -31,11 +31,14 @@ class RecipeService {
 
   async updateRecipeCookBookId(ids, cookbook_id) {
     try {
-      const updateRecipe = await Recipe.updateMany(
-        { _id: { $in: [ids] } }, // эт ж массив, может просто ids, без []
-        { $set: { cookbook_id: cookbook_id } }
-      );
-      return updateRecipe;
+      const result = [];
+      for (let index = 0; index < ids.length; index++) {
+        let update = await Recipe.findByIdAndUpdate(ids[index]._id, {
+          cookbook_id: cookbook_id,
+        });
+        result.push(update);
+      }
+      return result;
     } catch (err) {
       console.log(err);
     }

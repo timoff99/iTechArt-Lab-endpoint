@@ -8,7 +8,7 @@ class CookBookService {
     username,
     secure_url,
     public_id,
-    recipes,
+    selectedRecipes,
     id
   ) {
     try {
@@ -18,7 +18,7 @@ class CookBookService {
         author: username,
         image: secure_url,
         cloudinary_id: public_id,
-        recipes,
+        recipes: selectedRecipes,
         user_id: id,
       });
       return await cookBook.save();

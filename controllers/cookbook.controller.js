@@ -5,7 +5,7 @@ const cloudinary = require("../utils/cloudinary");
 class CookBookController {
   async addCookBook(req, res) {
     try {
-      const { title, description, recipes, image } = req.body;
+      const { title, description, selectedRecipes, image } = req.body;
       const { id, username } = req.user;
       const { secure_url, public_id } = image;
       const cookBook = await cookBookService.addCookBook(
@@ -14,7 +14,7 @@ class CookBookController {
         username,
         secure_url,
         public_id,
-        recipes,
+        selectedRecipes,
         id
       );
       res.json(cookBook);
@@ -49,27 +49,13 @@ class CookBookController {
 
   async getCookBook(req, res) {
     try {
-      const cookBook = await CookBook.findById(req.query._id).populate(
-        "recipes"
-      );
-      res.json(cookBook);
-    } catch (e) {
-      return res.status(400).json({
-        message: e.message,
-      });
-    }
-  }
-
-  async updateCookBookViews(req, res) {
-    try {
-      //lol
-      const { _id } = req.body;
-      const updatedCookBook = await CookBook.findByIdAndUpdate(
+      const _id = req.query[0];
+      const cookBook = await CookBook.findByIdAndUpdate(
         _id,
         { $inc: { views: 1 } },
         { new: true }
-      );
-      res.json(updatedCookBook);
+      ).populate("recipes");
+      res.json(cookBook);
     } catch (e) {
       return res.status(400).json({
         message: e.message,
@@ -79,13 +65,12 @@ class CookBookController {
 
   async updateCookBookLikes(req, res) {
     try {
+      //lol
       const { id } = req.user;
       const { _id } = req.body;
-      const checkUserLike = await CookBook.find({ _id }).exists("likes", true);
-      const updatedCookBook = await CookBook.findByIdAndUpdate(
-        _id,
-        { $inc: { views: 1 } },
-        { new: true }
+      const updatedCookBook = await CookBook.findOneAndUpdate(
+        { _id: _id, likes: { $exists: true } },
+        { $inc: id }
       );
       res.json(updatedCookBook);
     } catch (e) {

@@ -50,7 +50,12 @@ class RecipeController {
 
   async getRecipe(req, res) {
     try {
-      const recipes = await Recipe.findById(req.query._id);
+      const _id = req.query[0];
+      const recipes = await Recipe.findByIdAndUpdate(
+        _id,
+        { $inc: { views: 1 } },
+        { new: true }
+      );
       res.json(recipes);
     } catch (e) {
       return res.status(400).json({
@@ -72,7 +77,7 @@ class RecipeController {
 
   async updateRecipeCookBookId(req, res) {
     try {
-      const { ids, cookbook_id } = req.body;
+      const { selectedRecipes: ids, _id: cookbook_id } = req.body;
       const updateRecipe = await recipeService.updateRecipeCookBookId(
         ids,
         cookbook_id
@@ -96,21 +101,6 @@ class RecipeController {
         req
       );
       res.json(updateRecipe);
-    } catch (e) {
-      return res.status(400).json({
-        message: e.message,
-      });
-    }
-  }
-  async updateRecipeViews(req, res) {
-    try {
-      const { _id } = req.body;
-      const updatedRecipe = await Recipe.findByIdAndUpdate(
-        _id,
-        { $inc: { views: 1 } },
-        { new: true }
-      );
-      res.json(updatedRecipe);
     } catch (e) {
       return res.status(400).json({
         message: e.message,
