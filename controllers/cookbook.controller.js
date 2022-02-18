@@ -5,9 +5,11 @@ const cloudinary = require("../utils/cloudinary");
 class CookBookController {
   async addCookBook(req, res) {
     try {
-      const { title, description, selectedRecipes, image } = req.body;
+      const { title, description, selectedRecipes, image, cookbookTypes } =
+        req.body;
       const { id, username } = req.user;
       const { secure_url, public_id } = image;
+
       const cookBook = await cookBookService.addCookBook(
         title,
         description,
@@ -15,7 +17,8 @@ class CookBookController {
         secure_url,
         public_id,
         selectedRecipes,
-        id
+        id,
+        cookbookTypes
       );
       res.json(cookBook);
     } catch (e) {
@@ -56,6 +59,68 @@ class CookBookController {
         { new: true }
       ).populate("recipes");
       res.json(cookBook);
+    } catch (e) {
+      return res.status(400).json({
+        message: e.message,
+      });
+    }
+  }
+
+  async getSortedCookBook(req, res) {
+    try {
+      const query = req.query[0];
+      const type = "type";
+      if (query?.includes(type)) {
+        let resultType;
+        if (query.lastIndexOf("&") > query.indexOf(type)) {
+          resultType = query.slice(
+            query.lastIndexOf(type) + type.length + 1,
+            query.lastIndexOf("&")
+          );
+        } else {
+          resultType = query.slice(query.lastIndexOf(type) + type.length + 1);
+        }
+        const typeArray = resultType.split("%2C");
+
+        const cookBook = await CookBook.find({
+          types: { $exists: true, $in: typeArray },
+        });
+
+        res.json(cookBook);
+      } else {
+        const cookBook = await CookBook.find({});
+        res.json(cookBook);
+      }
+    } catch (e) {
+      return res.status(400).json({
+        message: e.message,
+      });
+    }
+  }
+
+  async getCookBooksSortBy(req, res) {
+    try {
+      const query = req.query[0];
+      const { sortedCookBook } = req.body;
+      const sort = "sort";
+      if (query?.includes(sort)) {
+        let resultSort;
+        if (query.lastIndexOf("&") > query.indexOf(sort)) {
+          resultSort = query.slice(
+            query.lastIndexOf(sort) + sort.length + 1,
+            query.lastIndexOf("&")
+          );
+        } else {
+          resultSort = query.slice(query.lastIndexOf(sort) + sort.length + 1);
+        }
+        const sorted = sortedCookBook.sort((a, b) =>
+          a.resultSort > b.resultSort ? 1 : b.resultSort > a.resultSort ? -1 : 0
+        );
+
+        res.json(sorted);
+      } else {
+        res.json(sortedCookBook);
+      }
     } catch (e) {
       return res.status(400).json({
         message: e.message,

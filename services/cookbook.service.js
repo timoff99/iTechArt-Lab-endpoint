@@ -9,7 +9,8 @@ class CookBookService {
     secure_url,
     public_id,
     selectedRecipes,
-    id
+    id,
+    cookbookTypes
   ) {
     try {
       const cookBook = new CookBook({
@@ -20,6 +21,7 @@ class CookBookService {
         cloudinary_id: public_id,
         recipes: selectedRecipes,
         user_id: id,
+        types: cookbookTypes,
       });
       return await cookBook.save();
     } catch (err) {

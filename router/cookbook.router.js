@@ -8,6 +8,8 @@ router.post("/create", upload.single("image"), controller.addCookBook);
 router.get("/get-all-cookbooks", controller.getAllCookBooks);
 router.get("/get-user-cookbooks", controller.getUserCookBooks);
 router.get("/get", controller.getCookBook);
+router.get("/get-sorted-cookbooks", controller.getSortedCookBook);
+router.get("/get-cookbooks-sort-by", controller.getCookBooksSortBy);
 router.put("/update", controller.updateCookBook);
 router.put("/update-likes", controller.updateCookBookLikes);
 router.delete("/delete", controller.deleteCookBook);

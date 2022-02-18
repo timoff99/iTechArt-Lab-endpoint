@@ -10,6 +10,7 @@ const CookBookSchema = new Schema({
     count: { type: Number, default: "12" },
     message: [{ author: String, text: String, date: String, avatar: Buffer }],
   },
+  types: [{ type: String }],
   image: { type: String },
   cloudinary_id: { type: String },
   recipes: [{ type: Types.ObjectId, ref: "Recipe" }],
