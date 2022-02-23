@@ -8,6 +8,7 @@ class RecipeService {
     ingredients,
     steps,
     username,
+    cooking_time,
     secure_url,
     public_id,
     id
@@ -19,6 +20,7 @@ class RecipeService {
         author: username,
         ingredients,
         steps,
+        cooking_time,
         image: secure_url,
         cloudinary_id: public_id,
         user_id: id,

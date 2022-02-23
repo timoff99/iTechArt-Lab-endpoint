@@ -5,7 +5,8 @@ const cloudinary = require("../utils/cloudinary");
 class RecipeController {
   async addRecipe(req, res) {
     try {
-      const { title, description, ingredients, steps, image } = req.body;
+      const { title, description, ingredients, steps, image, cooking_time } =
+        req.body;
       const { id, username } = req.user;
       const { secure_url, public_id } = image;
       const recipe = await recipeService.addRecipe(
@@ -14,6 +15,7 @@ class RecipeController {
         ingredients,
         steps,
         username,
+        cooking_time,
         secure_url,
         public_id,
         id
@@ -68,6 +70,25 @@ class RecipeController {
     try {
       const recipes = await Recipe.find({ cookbook_id: { $exists: false } });
       res.json(recipes);
+    } catch (e) {
+      return res.status(400).json({
+        message: e.message,
+      });
+    }
+  }
+
+  async getFilteredRecipes(req, res) {
+    try {
+      const timeRange = req.query;
+      if (timeRange) {
+        const recipe = await Recipe.find({
+          cooking_time: { $gte: timeRange[0], $lte: timeRange[1] },
+        });
+        res.json(recipe);
+      } else {
+        const recipe = await Recipe.find({});
+        res.json(recipe);
+      }
     } catch (e) {
       return res.status(400).json({
         message: e.message,

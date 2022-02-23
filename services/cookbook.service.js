@@ -28,6 +28,43 @@ class CookBookService {
       console.log(err);
     }
   }
+  async getFilteredCookBook(type, sort, id) {
+    try {
+      const compareSort = (a, b) => {
+        if (Array.isArray(a[sort])) {
+          return a[sort].length < b[sort].length
+            ? 1
+            : b[sort].length < a[sort].length
+            ? -1
+            : 0;
+        }
+        return a[sort] < b[sort] ? 1 : b[sort] < a[sort] ? -1 : 0;
+      };
+
+      if (type && sort) {
+        let sorted = {};
+        if (type.includes("hide-my-cookbooks")) {
+          const hideMyCookbooks = await CookBook.find({
+            user_id: { $exists: true, $nin: [id] },
+          });
+
+          sorted = hideMyCookbooks.sort(compareSort);
+        } else {
+          const cookBook = await CookBook.find({
+            types: { $exists: true, $in: type },
+          });
+          sorted = cookBook.sort(compareSort);
+        }
+        return sorted;
+      } else if (sort) {
+        const cookBook = await CookBook.find({});
+        const sorted = cookBook.sort(compareSort);
+        return sorted;
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
   async updateCookBook(cookBook, result, req) {
     try {
