@@ -16,6 +16,8 @@ class AuthService {
       email: email,
       password: hashPassword,
       roles: userRole,
+      status:
+        "I don’t know about you but I love pizza. Especially when that pizza comes with Papa John’s very own garlic pizza sticks.",
     });
 
     const newUser = await createNewUser.save();
@@ -24,7 +26,8 @@ class AuthService {
       newUser._id,
       newUser.username,
       newUser.email,
-      newUser.roles
+      newUser.roles,
+      newUser.status
     );
 
     return {
@@ -45,19 +48,21 @@ class AuthService {
       user._id,
       user.username,
       user.email,
-      user.roles
+      user.roles,
+      user.status
     );
     return {
       token,
     };
   }
 
-  generateAccessToken(id, username, email, roles) {
+  generateAccessToken(id, username, email, roles, status) {
     const payload = {
       id,
       username,
       email,
       roles,
+      status,
     };
     return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "24h" });
   }

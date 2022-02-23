@@ -5,10 +5,13 @@ const upload = require("../utils/multer");
 const router = new Router();
 
 router.post("/create", upload.single("image"), controller.addRecipe);
-router.get("/getAll", controller.getAllRecipes);
-router.get("/getUserRecipes", controller.getUserRecipes);
-router.get("/get/:id", controller.getRecipe);
-router.put("/update/:id", controller.updateRecipe);
-router.delete("/:id", controller.deleteRecipes);
+router.get("/get-all-recipes", controller.getAllRecipes);
+router.get("/get-user-recipes", controller.getUserRecipes);
+router.get("/get", controller.getRecipe);
+router.get("/get-recipe-without-cookbook", controller.getRecipeWithoutCookBook);
+router.get("/get-filtered-recipes", controller.getFilteredRecipes);
+router.put("/update-recipe-cookbookid", controller.updateRecipeCookBookId);
+router.put("/update", controller.updateRecipe);
+router.delete("/delete", controller.deleteRecipes);
 
 module.exports = router;

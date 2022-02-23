@@ -6,7 +6,9 @@ class RecipeService {
     title,
     description,
     ingredients,
-    status,
+    steps,
+    username,
+    cooking_time,
     secure_url,
     public_id,
     id
@@ -15,13 +17,30 @@ class RecipeService {
       const recipe = new Recipe({
         title,
         description,
+        author: username,
         ingredients,
-        status,
+        steps,
+        cooking_time,
         image: secure_url,
         cloudinary_id: public_id,
         user_id: id,
       });
       return await recipe.save();
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async updateRecipeCookBookId(ids, cookbook_id) {
+    try {
+      const result = [];
+      for (let index = 0; index < ids.length; index++) {
+        let update = await Recipe.findByIdAndUpdate(ids[index]._id, {
+          cookbook_id: cookbook_id,
+        });
+        result.push(update);
+      }
+      return result;
     } catch (err) {
       console.log(err);
     }
