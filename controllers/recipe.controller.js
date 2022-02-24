@@ -41,7 +41,9 @@ class RecipeController {
 
   async getUserRecipes(req, res) {
     try {
-      const recipes = await Recipe.find({ user_id: req.user.id });
+      const recipes = await Recipe.find({ user_id: req.user.id }).populate(
+        "comments"
+      );
       res.json(recipes);
     } catch (e) {
       return res.status(400).json({
@@ -57,7 +59,13 @@ class RecipeController {
         _id,
         { $inc: { views: 1 } },
         { new: true }
-      );
+      ).populate({
+        path: "comments",
+        populate: {
+          path: "user_id",
+        },
+      });
+
       res.json(recipes);
     } catch (e) {
       return res.status(400).json({
@@ -83,12 +91,29 @@ class RecipeController {
       if (timeRange) {
         const recipe = await Recipe.find({
           cooking_time: { $gte: timeRange[0], $lte: timeRange[1] },
-        });
+        }).populate("comments");
         res.json(recipe);
       } else {
-        const recipe = await Recipe.find({});
+        const recipe = await Recipe.find({}).populate("comments");
         res.json(recipe);
       }
+    } catch (e) {
+      return res.status(400).json({
+        message: e.message,
+      });
+    }
+  }
+
+  async updateRecipeComments(req, res) {
+    try {
+      const { card_id, comment_id } = req.body;
+      const updatedRecipe = await Recipe.findOneAndUpdate(
+        { _id: card_id },
+        {
+          $push: { comments: comment_id },
+        }
+      );
+      res.json(updatedRecipe);
     } catch (e) {
       return res.status(400).json({
         message: e.message,

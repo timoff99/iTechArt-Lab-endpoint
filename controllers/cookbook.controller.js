@@ -41,7 +41,9 @@ class CookBookController {
 
   async getUserCookBooks(req, res) {
     try {
-      const cookBook = await CookBook.find({ user_id: req.user.id });
+      const cookBook = await CookBook.find({ user_id: req.user.id }).populate(
+        "comments"
+      );
       res.json(cookBook);
     } catch (e) {
       return res.status(400).json({
@@ -57,7 +59,14 @@ class CookBookController {
         _id,
         { $inc: { views: 1 } },
         { new: true }
-      ).populate("recipes");
+      )
+        .populate("recipes")
+        .populate({
+          path: "comments",
+          populate: {
+            path: "user_id",
+          },
+        });
       res.json(cookBook);
     } catch (e) {
       return res.status(400).json({
@@ -71,6 +80,23 @@ class CookBookController {
       const { id } = req.user;
       const sorted = await cookBookService.getFilteredCookBook(type, sort, id);
       res.json(sorted);
+    } catch (e) {
+      return res.status(400).json({
+        message: e.message,
+      });
+    }
+  }
+
+  async updateCookBookComments(req, res) {
+    try {
+      const { card_id, comment_id } = req.body;
+      const updatedCookBook = await CookBook.findOneAndUpdate(
+        { _id: card_id },
+        {
+          $push: { comments: comment_id },
+        }
+      );
+      res.json(updatedCookBook);
     } catch (e) {
       return res.status(400).json({
         message: e.message,

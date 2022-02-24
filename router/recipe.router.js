@@ -10,6 +10,7 @@ router.get("/get-user-recipes", controller.getUserRecipes);
 router.get("/get", controller.getRecipe);
 router.get("/get-recipe-without-cookbook", controller.getRecipeWithoutCookBook);
 router.get("/get-filtered-recipes", controller.getFilteredRecipes);
+router.put("/update-recipe-comments", controller.updateRecipeComments);
 router.put("/update-recipe-cookbookid", controller.updateRecipeCookBookId);
 router.put("/update", controller.updateRecipe);
 router.delete("/delete", controller.deleteRecipes);

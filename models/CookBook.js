@@ -6,14 +6,11 @@ const CookBookSchema = new Schema({
   author: { type: String },
   views: { type: Number, default: "12000" },
   likes: [{ type: Types.ObjectId, ref: "User", default: [1] }],
-  comments: {
-    count: { type: Number, default: "12" },
-    message: [{ author: String, text: String, date: String, avatar: Buffer }],
-  },
   types: [{ type: String }],
   image: { type: String },
   cloudinary_id: { type: String },
   recipes: [{ type: Types.ObjectId, ref: "Recipe" }],
+  comments: [{ type: Types.ObjectId, ref: "CookBookComments" }],
   user_id: { type: Types.ObjectId, ref: "User" },
 });
 
