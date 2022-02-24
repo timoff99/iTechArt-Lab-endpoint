@@ -9,6 +9,7 @@ router.get("/get-all-cookbooks", controller.getAllCookBooks);
 router.get("/get-user-cookbooks", controller.getUserCookBooks);
 router.get("/get", controller.getCookBook);
 router.get("/get-filtered-cookbooks", controller.getFilteredCookBook);
+router.put("/update-comments", controller.updateCookBookComments);
 router.put("/update", controller.updateCookBook);
 router.put("/update-likes", controller.updateCookBookLikes);
 router.delete("/delete", controller.deleteCookBook);

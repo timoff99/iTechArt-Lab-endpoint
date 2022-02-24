@@ -46,18 +46,18 @@ class CookBookService {
         if (type.includes("hide-my-cookbooks")) {
           const hideMyCookbooks = await CookBook.find({
             user_id: { $exists: true, $nin: [id] },
-          });
+          }).populate("comments");
 
           sorted = hideMyCookbooks.sort(compareSort);
         } else {
           const cookBook = await CookBook.find({
             types: { $exists: true, $in: type },
-          });
+          }).populate("comments");
           sorted = cookBook.sort(compareSort);
         }
         return sorted;
       } else if (sort) {
-        const cookBook = await CookBook.find({});
+        const cookBook = await CookBook.find({}).populate("comments");
         const sorted = cookBook.sort(compareSort);
         return sorted;
       }
