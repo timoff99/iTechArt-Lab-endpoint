@@ -41,9 +41,9 @@ class CookBookController {
 
   async getUserCookBooks(req, res) {
     try {
-      const cookBook = await CookBook.find({ user_id: req.user.id }).populate(
-        "comments"
-      );
+      const cookBook = await CookBook.find({ user_id: req.user.id })
+        .populate("comments")
+        .populate("recipes");
       res.json(cookBook);
     } catch (e) {
       return res.status(400).json({
@@ -106,13 +106,24 @@ class CookBookController {
 
   async updateCookBookLikes(req, res) {
     try {
-      //lol
       const { id } = req.user;
-      const { _id } = req.body;
-      const updatedCookBook = await CookBook.findOneAndUpdate(
-        { _id: _id, likes: { $exists: true } },
-        { $inc: id }
-      );
+      const _id = req.query[0];
+      const exists = await CookBook.find({
+        _id: _id,
+        likes: { $exists: true, $in: [id] },
+      });
+      let updatedCookBook;
+      if (exists?.length) {
+        updatedCookBook = await CookBook.updateOne(
+          { _id: _id },
+          { $pull: { likes: id } }
+        );
+      } else {
+        updatedCookBook = await CookBook.updateOne(
+          { _id: _id },
+          { $push: { likes: id } }
+        );
+      }
       res.json(updatedCookBook);
     } catch (e) {
       return res.status(400).json({
@@ -122,14 +133,15 @@ class CookBookController {
   }
 
   async updateCookBook(req, res) {
-    // ?????
     try {
+      const { image } = req.body;
+      const { cloudinary_id } = image;
       const cookBook = await CookBook.findById(req.body._id);
-      await cloudinary.uploader.destroy(cookBook.cloudinary_id);
-      const result = await cloudinary.uploader.upload(req.file.path);
+      if (cloudinary_id) {
+        await cloudinary.uploader.destroy(cloudinary_id);
+      }
       const updateCookBook = await cookBookService.updateCookBook(
         cookBook,
-        result,
         req
       );
       res.json(updateCookBook);
@@ -142,7 +154,7 @@ class CookBookController {
 
   async deleteCookBook(req, res) {
     try {
-      const cookBook = await CookBook.findById(req.body.id);
+      const cookBook = await CookBook.findById(req.query[0]);
       const deletedCookBook = await cookBookService.deleteCookBook(cookBook);
       res.json(deletedCookBook);
     } catch (e) {
