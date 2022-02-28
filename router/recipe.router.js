@@ -13,6 +13,8 @@ router.get("/get-filtered-recipes", controller.getFilteredRecipes);
 router.put("/update-recipe-comments", controller.updateRecipeComments);
 router.put("/update-recipe-cookbookid", controller.updateRecipeCookBookId);
 router.put("/update", controller.updateRecipe);
+router.put("/update-likes", controller.updateRecipeLikes);
+router.delete("/delete-recipe-cookbookid", controller.deleteRecipesCookBookId);
 router.delete("/delete", controller.deleteRecipes);
 
 module.exports = router;

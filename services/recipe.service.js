@@ -20,6 +20,8 @@ class RecipeService {
         author: username,
         ingredients,
         steps,
+        views: 0,
+        likes: [],
         cooking_time,
         image: secure_url,
         cloudinary_id: public_id,
@@ -46,18 +48,18 @@ class RecipeService {
     }
   }
 
-  async updateRecipe(recipes, result, req) {
+  async updateRecipe(recipes, req) {
     try {
       const data = {
         title: req.body.title || recipes.title,
         description: req.body.description || recipes.description,
         ingredients: req.body.ingredients || recipes.ingredients,
         steps: req.body.steps || recipes.steps,
-        image: result.secure_url || recipes.image,
-        cloudinary_id: result.public_id || recipes.cloudinary_id,
-        user_id: recipes.user_id,
+        image: req.body.image.secure_url || recipes.image,
+        cooking_time: req.body.cooking_time || recipes.cooking_time,
+        cloudinary_id: req.body.image.public_id || recipes.cloudinary_id,
       };
-      const updateRecipe = await Recipe.findByIdAndUpdate(req.params.id, data, {
+      const updateRecipe = await Recipe.findByIdAndUpdate(req.body._id, data, {
         new: true,
       });
       return updateRecipe;

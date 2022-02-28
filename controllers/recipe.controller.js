@@ -138,14 +138,14 @@ class RecipeController {
 
   async updateRecipe(req, res) {
     try {
-      const recipes = await Recipe.findById(req.query._id);
-      await cloudinary.uploader.destroy(recipes.cloudinary_id);
-      const result = await cloudinary.uploader.upload(req.file.path);
-      const updateRecipe = await recipeService.updateRecipe(
-        recipes,
-        result,
-        req
-      );
+      const { image } = req.body;
+      const { cloudinary_id } = image;
+      const recipes = await Recipe.findById(req.body._id);
+      if (cloudinary_id) {
+        console.log("delete image");
+        await cloudinary.uploader.destroy(cloudinary_id);
+      }
+      const updateRecipe = await recipeService.updateRecipe(recipes, req);
       res.json(updateRecipe);
     } catch (e) {
       return res.status(400).json({
@@ -154,9 +154,51 @@ class RecipeController {
     }
   }
 
+  async updateRecipeLikes(req, res) {
+    try {
+      const { id } = req.user;
+      const _id = req.query[0];
+      const exists = await Recipe.find({
+        _id: _id,
+        likes: { $exists: true, $in: [id] },
+      });
+      let updatedRecipe;
+      if (exists?.length) {
+        updatedRecipe = await Recipe.updateOne(
+          { _id: _id },
+          { $pull: { likes: id } }
+        );
+      } else {
+        updatedRecipe = await Recipe.updateOne(
+          { _id: _id },
+          { $push: { likes: id } }
+        );
+      }
+      res.json(updatedRecipe);
+    } catch (e) {
+      return res.status(400).json({
+        message: e.message,
+      });
+    }
+  }
+
+  async deleteRecipesCookBookId(req, res) {
+    try {
+      const recipesId = req.body.selectedRecipes.map(({ _id }) => _id);
+      const recipe = await Recipe.updateMany(
+        { _id: { $in: recipesId } },
+        { $unset: { cookbook_id: req.body._id } }
+      );
+      res.json(recipe);
+    } catch (e) {
+      return res.status(400).json({
+        message: e.message,
+      });
+    }
+  }
   async deleteRecipes(req, res) {
     try {
-      const recipe = await Recipe.findById(req.query._id);
+      const recipe = await Recipe.findById(req.query[0]);
       const deletedRecipes = await recipeService.deleteRecipes(recipe);
       res.json(deletedRecipes);
     } catch (e) {

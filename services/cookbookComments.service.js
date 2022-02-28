@@ -7,7 +7,7 @@ class CookBookCommentsService {
         message,
         user_id: id,
         parent_id,
-        time: Date.now(),
+        time: new Date(),
       });
 
       const newCookbookComment = await createNewCookbookComment.save();

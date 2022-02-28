@@ -18,6 +18,8 @@ class CookBookService {
         description,
         author: username,
         image: secure_url,
+        views: 0,
+        likes: [],
         cloudinary_id: public_id,
         recipes: selectedRecipes,
         user_id: id,
@@ -66,18 +68,18 @@ class CookBookService {
     }
   }
 
-  async updateCookBook(cookBook, result, req) {
+  async updateCookBook(cookBook, req) {
     try {
       const data = {
         title: req.body.title || cookBook.title,
         description: req.body.description || cookBook.description,
-        image: result.secure_url || cookBook.image,
-        cloudinary_id: result.public_id || cookBook.cloudinary_id,
-        recipes: req.body.recipes || cookBook.recipes,
-        user_id: cookBook.user_id,
+        types: req.body.cookbookTypes || cookBook.types,
+        image: req.body.image.secure_url || cookBook.image,
+        cloudinary_id: req.body.image.public_id || cookBook.cloudinary_id,
+        recipes: req.body.selectedRecipes || cookBook.recipes,
       };
       const updateCookBook = await CookBook.findByIdAndUpdate(
-        req.params.id,
+        req.body._id,
         data,
         {
           new: true,
