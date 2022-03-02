@@ -67,6 +67,53 @@ class RecipeService {
       console.log(err);
     }
   }
+  async getFilteredRecipes(timeRange, search, sort, page, PAGE_SIZE) {
+    try {
+      const compareSort = (a, b) => {
+        if (Array.isArray(a[sort])) {
+          return a[sort].length < b[sort].length
+            ? 1
+            : b[sort].length < a[sort].length
+            ? -1
+            : 0;
+        }
+        return a[sort] < b[sort] ? 1 : b[sort] < a[sort] ? -1 : 0;
+      };
+
+      if (timeRange) {
+        let recipe;
+        if (search[0]) {
+          recipe = await Recipe.find({
+            title: { $regex: search[0] },
+            cooking_time: { $gte: timeRange[0], $lte: timeRange[1] },
+          })
+            .skip(page * PAGE_SIZE)
+            .limit(PAGE_SIZE)
+            .populate("comments");
+        } else {
+          recipe = await Recipe.find({
+            cooking_time: { $gte: timeRange[0], $lte: timeRange[1] },
+          })
+            .skip(page * PAGE_SIZE)
+            .limit(PAGE_SIZE)
+            .populate("comments");
+        }
+        const recipes = recipe.sort(compareSort);
+
+        const total = await Recipe.countDocuments({
+          cooking_time: { $gte: timeRange[0], $lte: timeRange[1] },
+        });
+
+        const sorted = recipes.sort(compareSort);
+        return { recipe: sorted, total };
+      } else {
+        const recipe = await Recipe.find({}).populate("comments");
+        res.json(recipe);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
   async deleteRecipes(recipe) {
     try {

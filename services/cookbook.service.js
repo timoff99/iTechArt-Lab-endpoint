@@ -30,7 +30,7 @@ class CookBookService {
       console.log(err);
     }
   }
-  async getFilteredCookBook(type, sort, id) {
+  async getFilteredCookBook(type, sort, search, id, PAGE_SIZE, page) {
     try {
       const compareSort = (a, b) => {
         if (Array.isArray(a[sort])) {
@@ -45,23 +45,70 @@ class CookBookService {
 
       if (type && sort) {
         let sorted = {};
+        let total;
         if (type.includes("hide-my-cookbooks")) {
-          const hideMyCookbooks = await CookBook.find({
-            user_id: { $exists: true, $nin: [id] },
-          }).populate("comments");
+          let hideMyCookbooks;
+          if (search[0]) {
+            hideMyCookbooks = await CookBook.find({
+              title: { $regex: search[0] },
+              user_id: { $exists: true, $nin: [id] },
+            })
+              .skip(page * PAGE_SIZE)
+              .limit(PAGE_SIZE)
+              .populate("comments");
+          } else {
+            hideMyCookbooks = await CookBook.find({
+              user_id: { $exists: true, $nin: [id] },
+            })
+              .skip(page * PAGE_SIZE)
+              .limit(PAGE_SIZE)
+              .populate("comments");
+          }
 
           sorted = hideMyCookbooks.sort(compareSort);
+          total = await CookBook.countDocuments({
+            user_id: { $exists: true, $nin: [id] },
+          });
         } else {
-          const cookBook = await CookBook.find({
-            types: { $exists: true, $in: type },
-          }).populate("comments");
+          let cookBook;
+          if (search[0]) {
+            cookBook = await CookBook.find({
+              title: { $regex: search[0] },
+              types: { $exists: true, $in: type },
+            })
+              .skip(page * PAGE_SIZE)
+              .limit(PAGE_SIZE)
+              .populate("comments");
+          } else {
+            cookBook = await CookBook.find({
+              types: { $exists: true, $in: type },
+            })
+              .skip(page * PAGE_SIZE)
+              .limit(PAGE_SIZE)
+              .populate("comments");
+          }
           sorted = cookBook.sort(compareSort);
+          total = await CookBook.countDocuments({
+            types: { $exists: true, $in: type },
+          });
         }
-        return sorted;
+        return { sorted, total };
       } else if (sort) {
-        const cookBook = await CookBook.find({}).populate("comments");
+        let cookBook;
+        if (search[0]) {
+          cookBook = await CookBook.find({ title: { $regex: search[0] } })
+            .skip(page * PAGE_SIZE)
+            .limit(PAGE_SIZE)
+            .populate("comments");
+        } else {
+          cookBook = await CookBook.find({})
+            .skip(page * PAGE_SIZE)
+            .limit(PAGE_SIZE)
+            .populate("comments");
+        }
         const sorted = cookBook.sort(compareSort);
-        return sorted;
+        const total = await CookBook.countDocuments({});
+        return { sorted, total };
       }
     } catch (err) {
       console.log(err);

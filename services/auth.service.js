@@ -18,6 +18,8 @@ class AuthService {
       roles: userRole,
       status:
         "I don’t know about you but I love pizza. Especially when that pizza comes with Papa John’s very own garlic pizza sticks.",
+      image:
+        "https://res.cloudinary.com/dipalio-cookbook/image/upload/v1645085466/zt5cdewjoqi57yumfc0r.jpg",
     });
 
     const newUser = await createNewUser.save();
