@@ -156,7 +156,7 @@ class RecipeController {
         page,
         PAGE_SIZE
       );
-      const totalPages = Math.ceil(total / PAGE_SIZE);
+      const totalPages = recipe.length ? Math.ceil(total / PAGE_SIZE) : 0;
 
       res.json({ recipe, totalPages });
     } catch (e) {

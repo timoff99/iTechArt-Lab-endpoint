@@ -146,7 +146,7 @@ class CookBookController {
         PAGE_SIZE,
         page
       );
-      const totalPages = Math.ceil(total / PAGE_SIZE);
+      const totalPages = sorted.length ? Math.ceil(total / PAGE_SIZE) : 0;
       res.json({ sorted, totalPages });
     } catch (e) {
       return res.status(400).json({
