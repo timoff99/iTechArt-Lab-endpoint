@@ -28,10 +28,34 @@ class CookBookController {
     }
   }
 
-  async getAllCookBooks(req, res) {
+  async addCookBookClone(req, res) {
     try {
-      const cookBook = await CookBook.find();
-      res.json(cookBook);
+      const { _id } = req.body;
+      const { id } = req.user;
+      const cookbook = await CookBook.findOne({ _id });
+      const {
+        title,
+        description,
+        username,
+        image,
+        cloudinary_id,
+        recipes,
+        types,
+      } = cookbook;
+      const clone = new CookBook({
+        title,
+        description,
+        username,
+        image,
+        views: 0,
+        likes: [],
+        cloudinary_id,
+        recipes,
+        user_id: id,
+        types,
+      });
+      await clone.save();
+      res.json(clone);
     } catch (e) {
       return res.status(400).json({
         message: e.message,
@@ -41,10 +65,16 @@ class CookBookController {
 
   async getUserCookBooks(req, res) {
     try {
+      const PAGE_SIZE = 12;
+      const total = await CookBook.countDocuments({ user_id: req.user.id });
+      const page = parseInt(req.query.page || "0");
       const cookBook = await CookBook.find({ user_id: req.user.id })
+        .skip(page * PAGE_SIZE)
+        .limit(PAGE_SIZE)
         .populate("comments")
         .populate("recipes");
-      res.json(cookBook);
+      const totalPages = Math.ceil(total / PAGE_SIZE);
+      res.json({ cookBook, totalPages });
     } catch (e) {
       return res.status(400).json({
         message: e.message,
@@ -74,12 +104,50 @@ class CookBookController {
       });
     }
   }
+
+  async getCookBooksForMain(req, res) {
+    try {
+      const { limit, type } = req.query;
+
+      const compareSort = (a, b) => {
+        if (Array.isArray(a[type])) {
+          return a[type].length < b[type].length
+            ? 1
+            : b[type].length < a[type].length
+            ? -1
+            : 0;
+        }
+        return a[type] < b[type] ? 1 : b[type] < a[type] ? -1 : 0;
+      };
+
+      const cookbooks = await CookBook.find({})
+        .limit(limit)
+        .populate("comments");
+      const sorted = cookbooks.sort(compareSort);
+      res.json({ cookbooks: sorted });
+    } catch (e) {
+      return res.status(400).json({
+        message: e.message,
+      });
+    }
+  }
+
   async getFilteredCookBook(req, res) {
     try {
-      const { type, sort } = req.query;
+      const PAGE_SIZE = 12;
+      const page = parseInt(req.query.page || "0");
+      const { type, sort, search } = req.query;
       const { id } = req.user;
-      const sorted = await cookBookService.getFilteredCookBook(type, sort, id);
-      res.json(sorted);
+      const { sorted, total } = await cookBookService.getFilteredCookBook(
+        type,
+        sort,
+        search,
+        id,
+        PAGE_SIZE,
+        page
+      );
+      const totalPages = sorted.length ? Math.ceil(total / PAGE_SIZE) : 0;
+      res.json({ sorted, totalPages });
     } catch (e) {
       return res.status(400).json({
         message: e.message,

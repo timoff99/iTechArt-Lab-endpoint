@@ -12,6 +12,7 @@ const cookBookRouter = require("./router/cookbook.router");
 const imageRouter = require("./router/image.router");
 const cookbookCommentsRouter = require("./router/cookbookComments.router");
 const recipeCommentsRouter = require("./router/recipeComments.router");
+const mail = require("./router/mail.router");
 
 const PORT = process.env.PORT || 5000;
 const app = express();
@@ -26,12 +27,13 @@ app.use(
 app.use(cookieParser());
 app.use("/api/auth", authRouter);
 app.use("/api/role", roleRouter);
-app.use("/api/user", auth, userRouter);
-app.use("/api/recipe", auth, recipeRouter);
-app.use("/api/cookbook", auth, cookBookRouter);
+app.use("/api/user", userRouter);
+app.use("/api/recipe", recipeRouter);
+app.use("/api/cookbook", cookBookRouter);
 app.use("/api/image", imageRouter);
 app.use("/api/cookbook-comments", auth, cookbookCommentsRouter);
 app.use("/api/recipe-comments", auth, recipeCommentsRouter);
+app.use("/api/mail", mail);
 
 const start = async () => {
   try {

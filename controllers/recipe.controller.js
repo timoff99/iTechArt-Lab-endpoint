@@ -28,10 +28,36 @@ class RecipeController {
     }
   }
 
-  async getAllRecipes(req, res) {
+  async addRecipeClone(req, res) {
     try {
-      const recipes = await Recipe.find();
-      res.json(recipes);
+      const { _id } = req.body;
+      const { id } = req.user;
+      const recipe = await Recipe.findOne({ _id });
+      const {
+        title,
+        description,
+        username,
+        ingredients,
+        steps,
+        cooking_time,
+        image,
+        cloudinary_id,
+      } = recipe;
+      const clone = new Recipe({
+        title,
+        description,
+        username,
+        ingredients,
+        steps,
+        views: 0,
+        likes: [],
+        cooking_time,
+        image,
+        cloudinary_id,
+        user_id: id,
+      });
+      await clone.save();
+      res.json(clone);
     } catch (e) {
       return res.status(400).json({
         message: e.message,
@@ -41,10 +67,17 @@ class RecipeController {
 
   async getUserRecipes(req, res) {
     try {
-      const recipes = await Recipe.find({ user_id: req.user.id }).populate(
-        "comments"
-      );
-      res.json(recipes);
+      const PAGE_SIZE = 12;
+      const total = await Recipe.countDocuments({ user_id: req.user.id });
+      const page = parseInt(req.query.page || "0");
+
+      const recipes = await Recipe.find({ user_id: req.user.id })
+        .skip(page * PAGE_SIZE)
+        .limit(PAGE_SIZE)
+        .populate("comments");
+      const totalPages = Math.ceil(total / PAGE_SIZE);
+
+      res.json({ recipes, totalPages });
     } catch (e) {
       return res.status(400).json({
         message: e.message,
@@ -85,18 +118,47 @@ class RecipeController {
     }
   }
 
+  async getRecipesForMain(req, res) {
+    try {
+      const { limit, type } = req.query;
+
+      const compareSort = (a, b) => {
+        if (Array.isArray(a[type])) {
+          return a[type].length < b[type].length
+            ? 1
+            : b[type].length < a[type].length
+            ? -1
+            : 0;
+        }
+        return a[type] < b[type] ? 1 : b[type] < a[type] ? -1 : 0;
+      };
+
+      const recipes = await Recipe.find({}).limit(limit).populate("comments");
+      const sorted = recipes.sort(compareSort);
+      res.json({ recipes: sorted });
+    } catch (e) {
+      return res.status(400).json({
+        message: e.message,
+      });
+    }
+  }
+
   async getFilteredRecipes(req, res) {
     try {
-      const timeRange = req.query;
-      if (timeRange) {
-        const recipe = await Recipe.find({
-          cooking_time: { $gte: timeRange[0], $lte: timeRange[1] },
-        }).populate("comments");
-        res.json(recipe);
-      } else {
-        const recipe = await Recipe.find({}).populate("comments");
-        res.json(recipe);
-      }
+      const PAGE_SIZE = 12;
+      const page = parseInt(req.query.page || "0");
+      const { timeRange, search, sort } = req.query;
+
+      const { recipe, total } = await recipeService.getFilteredRecipes(
+        timeRange,
+        search,
+        sort,
+        page,
+        PAGE_SIZE
+      );
+      const totalPages = recipe.length ? Math.ceil(total / PAGE_SIZE) : 0;
+
+      res.json({ recipe, totalPages });
     } catch (e) {
       return res.status(400).json({
         message: e.message,
@@ -142,7 +204,6 @@ class RecipeController {
       const { cloudinary_id } = image;
       const recipes = await Recipe.findById(req.body._id);
       if (cloudinary_id) {
-        console.log("delete image");
         await cloudinary.uploader.destroy(cloudinary_id);
       }
       const updateRecipe = await recipeService.updateRecipe(recipes, req);
