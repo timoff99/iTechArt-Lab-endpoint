@@ -33,17 +33,26 @@ class CookBookController {
       const { _id } = req.body;
       const { id } = req.user;
       const cookbook = await CookBook.findOne({ _id });
+      const {
+        title,
+        description,
+        username,
+        image,
+        cloudinary_id,
+        recipes,
+        types,
+      } = cookbook;
       const clone = new CookBook({
-        title: cookbook.title,
-        description: cookbook.title,
-        author: cookbook.username,
-        image: cookbook.image,
+        title,
+        description,
+        username,
+        image,
         views: 0,
         likes: [],
-        cloudinary_id: cookbook.cloudinary_id,
-        recipes: cookbook.recipes,
+        cloudinary_id,
+        recipes,
         user_id: id,
-        types: cookbook.types,
+        types,
       });
       await clone.save();
       res.json(clone);

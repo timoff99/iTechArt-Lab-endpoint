@@ -33,17 +33,27 @@ class RecipeController {
       const { _id } = req.body;
       const { id } = req.user;
       const recipe = await Recipe.findOne({ _id });
+      const {
+        title,
+        description,
+        username,
+        ingredients,
+        steps,
+        cooking_time,
+        image,
+        cloudinary_id,
+      } = recipe;
       const clone = new Recipe({
-        title: recipe.title,
-        description: recipe.title,
-        author: recipe.username,
-        ingredients: recipe.ingredients,
-        steps: recipe.steps,
+        title,
+        description,
+        username,
+        ingredients,
+        steps,
         views: 0,
         likes: [],
-        cooking_time: recipe.cooking_time,
-        image: recipe.image,
-        cloudinary_id: recipe.cloudinary_id,
+        cooking_time,
+        image,
+        cloudinary_id,
         user_id: id,
       });
       await clone.save();
