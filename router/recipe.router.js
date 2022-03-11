@@ -10,7 +10,7 @@ router.post("/create-clone", auth, controller.addRecipeClone);
 router.get("/get-user-recipes", auth, controller.getUserRecipes);
 router.get("/get", controller.getRecipe);
 router.get("/get-recipe-without-cookbook", controller.getRecipeWithoutCookBook);
-router.get("/get-filtered-recipes", controller.getFilteredRecipes);
+router.get("/get-filtered-recipes", auth, controller.getFilteredRecipes);
 router.get("/get-recipes-for-main", controller.getRecipesForMain);
 router.put("/update-recipe-comments", controller.updateRecipeComments);
 router.put("/update-recipe-cookbookid", controller.updateRecipeCookBookId);
