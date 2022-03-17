@@ -57,6 +57,32 @@ class AuthService {
       token,
     };
   }
+  async adminLogin(email, password) {
+    const admin = await User.findOne({ email }).populate({
+      path: "roles",
+      match: { value: { $eq: "ADMIN" } },
+    });
+    if (!admin) {
+      throw new Error(`email ${email} not found`);
+    }
+    if (!admin.roles) {
+      throw new Error(`user don't have such role`);
+    }
+    const validPassword = bcrypt.compareSync(password, admin.password);
+    if (!validPassword) {
+      throw new Error("wrong password entered");
+    }
+    const token = this.generateAccessToken(
+      admin._id,
+      admin.username,
+      admin.email,
+      admin.roles,
+      admin.status
+    );
+    return {
+      token,
+    };
+  }
 
   generateAccessToken(id, username, email, roles, status) {
     const payload = {

@@ -1,4 +1,3 @@
-const User = require("../models/User");
 const { validationResult } = require("express-validator");
 const authService = require("../services/auth.service");
 
@@ -23,6 +22,16 @@ class AuthController {
     try {
       const { email, password } = req.body;
       const token = await authService.login(email, password);
+      return res.json(token);
+    } catch (e) {
+      res.status(400).json({ message: e.message });
+    }
+  }
+
+  async adminLogin(req, res) {
+    try {
+      const { email, password } = req.body;
+      const token = await authService.adminLogin(email, password);
       return res.json(token);
     } catch (e) {
       res.status(400).json({ message: e.message });
