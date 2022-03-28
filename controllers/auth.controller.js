@@ -20,18 +20,9 @@ class AuthController {
 
   async login(req, res) {
     try {
+      const url = req.headers.origin;
       const { email, password } = req.body;
-      const token = await authService.login(email, password);
-      return res.json(token);
-    } catch (e) {
-      res.status(400).json({ message: e.message });
-    }
-  }
-
-  async adminLogin(req, res) {
-    try {
-      const { email, password } = req.body;
-      const token = await authService.adminLogin(email, password);
+      const token = await authService.login(email, password, url);
       return res.json(token);
     } catch (e) {
       res.status(400).json({ message: e.message });

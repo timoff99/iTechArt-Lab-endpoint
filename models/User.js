@@ -8,6 +8,9 @@ const UserSchema = new Schema({
   roles: { type: Types.ObjectId, ref: "Role" },
   image: { type: String },
   cloudinary_id: { type: String },
+  user_status: { type: String },
+  cookbook_id: [{ type: Types.ObjectId, ref: "CookBook" }],
+  recipe_id: [{ type: Types.ObjectId, ref: "Recipe" }],
 });
 
 module.exports = model("User", UserSchema);

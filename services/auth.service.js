@@ -20,6 +20,7 @@ class AuthService {
         "I don’t know about you but I love pizza. Especially when that pizza comes with Papa John’s very own garlic pizza sticks.",
       image:
         "https://res.cloudinary.com/dipalio-cookbook/image/upload/v1645085466/zt5cdewjoqi57yumfc0r.jpg",
+      user_status: "active",
     });
 
     const newUser = await createNewUser.save();
@@ -29,7 +30,8 @@ class AuthService {
       newUser.username,
       newUser.email,
       newUser.roles,
-      newUser.status
+      newUser.status,
+      newUser.user_status
     );
 
     return {
@@ -37,10 +39,22 @@ class AuthService {
     };
   }
 
-  async login(email, password) {
-    const user = await User.findOne({ email }).populate("roles");
+  async login(email, password, url) {
+    let user;
+    if (url === process.env.ADMIN_URL) {
+      user = await User.findOne({ email }).populate({
+        path: "roles",
+        match: { value: { $eq: "ADMIN" } },
+      });
+    }
+    if (url === process.env.CLIENT_URL) {
+      user = await User.findOne({ email }).populate("roles");
+    }
     if (!user) {
       throw new Error(`email ${email} not found`);
+    }
+    if (!user.roles) {
+      throw new Error(`user don't have such role`);
     }
     const validPassword = bcrypt.compareSync(password, user.password);
     if (!validPassword) {
@@ -51,46 +65,22 @@ class AuthService {
       user.username,
       user.email,
       user.roles,
-      user.status
-    );
-    return {
-      token,
-    };
-  }
-  async adminLogin(email, password) {
-    const admin = await User.findOne({ email }).populate({
-      path: "roles",
-      match: { value: { $eq: "ADMIN" } },
-    });
-    if (!admin) {
-      throw new Error(`email ${email} not found`);
-    }
-    if (!admin.roles) {
-      throw new Error(`user don't have such role`);
-    }
-    const validPassword = bcrypt.compareSync(password, admin.password);
-    if (!validPassword) {
-      throw new Error("wrong password entered");
-    }
-    const token = this.generateAccessToken(
-      admin._id,
-      admin.username,
-      admin.email,
-      admin.roles,
-      admin.status
+      user.status,
+      user.user_status
     );
     return {
       token,
     };
   }
 
-  generateAccessToken(id, username, email, roles, status) {
+  generateAccessToken(id, username, email, roles, status, user_status) {
     const payload = {
       id,
       username,
       email,
       roles,
       status,
+      user_status,
     };
     return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "24h" });
   }

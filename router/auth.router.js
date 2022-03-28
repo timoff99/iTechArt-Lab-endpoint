@@ -13,5 +13,4 @@ router.post(
   controller.signup
 );
 router.post("/login", controller.login);
-router.post("/admin-login", controller.adminLogin);
 module.exports = router;

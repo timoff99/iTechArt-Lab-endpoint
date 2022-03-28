@@ -2,6 +2,13 @@ const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 
 class UserService {
+  async getAllUsers(status) {
+    if (status) {
+      await User.find({ user_status: status });
+    }
+    return await User.find({});
+  }
+
   async getUser(id) {
     return User.findById(id).populate("roles");
   }
