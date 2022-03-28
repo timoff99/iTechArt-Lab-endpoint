@@ -1,4 +1,3 @@
-const User = require("../models/User");
 const { validationResult } = require("express-validator");
 const authService = require("../services/auth.service");
 
@@ -21,8 +20,9 @@ class AuthController {
 
   async login(req, res) {
     try {
+      const url = req.headers.origin;
       const { email, password } = req.body;
-      const token = await authService.login(email, password);
+      const token = await authService.login(email, password, url);
       return res.json(token);
     } catch (e) {
       res.status(400).json({ message: e.message });
