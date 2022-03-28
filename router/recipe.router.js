@@ -2,21 +2,40 @@ const Router = require("express");
 const controller = require("../controllers/recipe.controller");
 const upload = require("../utils/multer");
 const auth = require("../middleware/auth.middleware");
+const { RecipeRoutes } = require("../constants/recipe");
 
 const router = new Router();
 
-router.post("/create", upload.single("image"), auth, controller.addRecipe);
-router.post("/create-clone", auth, controller.addRecipeClone);
-router.get("/get-user-recipes", auth, controller.getUserRecipes);
-router.get("/get", controller.getRecipe);
-router.get("/get-recipe-without-cookbook", controller.getRecipeWithoutCookBook);
-router.get("/get-filtered-recipes", auth, controller.getFilteredRecipes);
-router.get("/get-recipes-for-main", controller.getRecipesForMain);
-router.put("/update-recipe-comments", controller.updateRecipeComments);
-router.put("/update-recipe-cookbookid", controller.updateRecipeCookBookId);
-router.put("/update", controller.updateRecipe);
-router.put("/update-likes", auth, controller.updateRecipeLikes);
-router.delete("/delete-recipe-cookbookid", controller.deleteRecipesCookBookId);
-router.delete("/delete", controller.deleteRecipes);
+router.post(
+  RecipeRoutes.create,
+  upload.single("image"),
+  auth,
+  controller.addRecipe
+);
+router.post(RecipeRoutes.createClone, auth, controller.addRecipeClone);
+router.get(RecipeRoutes.getUserRecipes, auth, controller.getUserRecipes);
+router.get(RecipeRoutes.get, controller.getRecipe);
+router.get(
+  RecipeRoutes.getRecipeWithoutCookbook,
+  controller.getRecipeWithoutCookBook
+);
+router.get(
+  RecipeRoutes.getFilteredRecipes,
+  auth,
+  controller.getFilteredRecipes
+);
+router.get(RecipeRoutes.getRecipesForMain, controller.getRecipesForMain);
+router.put(RecipeRoutes.updateRecipeComments, controller.updateRecipeComments);
+router.put(
+  RecipeRoutes.updateRecipeCookbookid,
+  controller.updateRecipeCookBookId
+);
+router.put(RecipeRoutes.update, controller.updateRecipe);
+router.put(RecipeRoutes.updateLikes, auth, controller.updateRecipeLikes);
+router.delete(
+  RecipeRoutes.deleteRecipeCookbookid,
+  controller.deleteRecipesCookBookId
+);
+router.delete(RecipeRoutes.delete, controller.deleteRecipes);
 
 module.exports = router;

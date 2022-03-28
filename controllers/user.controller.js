@@ -5,7 +5,12 @@ const jwt = require("jsonwebtoken");
 
 class UserController {
   async getAllUsers(req, res) {
-    const allUsers = await userService.getAllUsers(req?.query?.status);
+    const { order, orderBy } = req.query;
+    const allUsers = await userService.getAllUsers(
+      req?.query?.status,
+      order,
+      orderBy
+    );
     res.json({ allUsers });
   }
 

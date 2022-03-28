@@ -1,21 +1,30 @@
 const Router = require("express");
+const { UserRoutes } = require("../constants/user");
 const controller = require("../controllers/user.controller");
 const auth = require("../middleware/auth.middleware");
 
 const router = new Router();
 
-router.get("/get-all-users", controller.getAllUsers);
-router.get("/get-user", auth, controller.getUser);
-router.put("/update-user", auth, controller.updateUser);
-router.put("/update-user-cookbooks", auth, controller.updateUserCookBooks);
-router.put("/update-user-recipes", auth, controller.updateUserRecipes);
-router.put("/update-user-status", controller.updateUserStatus);
+router.get(UserRoutes.getAllUsers, controller.getAllUsers);
+router.get(UserRoutes.getUser, auth, controller.getUser);
+router.put(UserRoutes.updateUser, auth, controller.updateUser);
+router.put(
+  UserRoutes.updateUserCookbooks,
+  auth,
+  controller.updateUserCookBooks
+);
+router.put(UserRoutes.updateUserRecipes, auth, controller.updateUserRecipes);
+router.put(UserRoutes.updateUserStatus, controller.updateUserStatus);
 router.delete(
-  "/delete-user-cookbook-id",
+  UserRoutes.deleteUserCookbookId,
   auth,
   controller.deleteUserCookBookId
 );
-router.delete("/delete-user-recipes-id", auth, controller.deleteUserRecipeId);
-router.put("/reset-password", controller.resetPass);
+router.delete(
+  UserRoutes.deleteUserRecipesId,
+  auth,
+  controller.deleteUserRecipeId
+);
+router.put(UserRoutes.resetPassword, controller.resetPass);
 
 module.exports = router;
