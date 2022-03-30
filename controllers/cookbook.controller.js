@@ -155,6 +155,44 @@ class CookBookController {
     }
   }
 
+  async getCookbookStatistics(req, res) {
+    try {
+      const cookbookCount = await CookBook.find({}).countDocuments();
+      const cookbookViews = await CookBook.aggregate([
+        {
+          $group: {
+            _id: null,
+            total: {
+              $sum: "$views",
+            },
+          },
+        },
+      ]);
+      const mostPopularCookbook = await CookBook.find()
+        .sort({ views: -1 })
+        .limit(1);
+      res.json({ cookbookCount, cookbookViews, mostPopularCookbook });
+    } catch (err) {
+      return res.status(400).json({
+        message: err.message,
+      });
+    }
+  }
+  async getAllSortedCookbooks(req, res) {
+    try {
+      const { order, orderBy } = req.query;
+      const allSortedCookbooks = await cookBookService.allSortedCookbooks(
+        order,
+        orderBy
+      );
+      res.json({ allSortedCookbooks });
+    } catch (err) {
+      return res.status(400).json({
+        message: err.message,
+      });
+    }
+  }
+
   async updateCookBookComments(req, res) {
     try {
       const { card_id, comment_id } = req.body;
@@ -222,8 +260,12 @@ class CookBookController {
 
   async deleteCookBook(req, res) {
     try {
-      const cookBook = await CookBook.findById(req.query[0]);
-      const deletedCookBook = await cookBookService.deleteCookBook(cookBook);
+      let cookbook;
+      cookbook = await CookBook.findById(req.query[0]);
+      if (!cookbook) {
+        cookbook = await CookBook.findById(req.query._id);
+      }
+      const deletedCookBook = await cookBookService.deleteCookBook(cookbook);
       res.json(deletedCookBook);
     } catch (e) {
       return res.status(400).json({

@@ -1,5 +1,6 @@
 const Recipe = require("../models/Recipe");
 const cloudinary = require("../utils/cloudinary");
+const { getComparator, stableSort } = require("../utils/tableSort");
 
 class RecipeService {
   async addRecipe(
@@ -115,6 +116,14 @@ class RecipeService {
     }
   }
 
+  async allSortedRecipes(order, orderBy) {
+    try {
+      const allRecipes = await Recipe.find({});
+      return stableSort(allRecipes, getComparator(order, orderBy));
+    } catch (err) {
+      console.log(err);
+    }
+  }
   async deleteRecipes(recipe) {
     try {
       await cloudinary.uploader.destroy(recipe.cloudinary_id);

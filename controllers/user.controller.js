@@ -18,6 +18,48 @@ class UserController {
     const user = await userService.getUser(req.user.id);
     return res.json({ user });
   }
+  async getUserStatistics(req, res) {
+    const allUsersCount = await User.find({}).countDocuments();
+    const blockedUsers = await User.find({
+      user_status: "blocked",
+    }).countDocuments();
+    const deletedUsers = await User.find({
+      user_status: "deleted",
+    }).countDocuments();
+
+    const countMostActiveCookbookUser = await User.aggregate([
+      {
+        $group: {
+          _id: null,
+          max: { $max: { $size: "$cookbook_id" } },
+        },
+      },
+    ]);
+
+    const countMostActiveRecipeUser = await User.aggregate([
+      {
+        $group: {
+          _id: null,
+          max: { $max: { $size: "$recipe_id" } },
+        },
+      },
+    ]);
+
+    const mostActiveCookbookUser = await User.find({
+      cookbook_id: { $size: countMostActiveCookbookUser[0].max },
+    });
+
+    const mostActiveRecipeUser = await User.find({
+      recipe_id: { $size: countMostActiveRecipeUser[0].max },
+    });
+    return res.json({
+      allUsersCount,
+      blockedUsers,
+      deletedUsers,
+      mostActiveCookbookUser,
+      mostActiveRecipeUser,
+    });
+  }
 
   async updateUser(req, res) {
     try {

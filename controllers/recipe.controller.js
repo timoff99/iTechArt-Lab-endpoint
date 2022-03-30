@@ -118,6 +118,45 @@ class RecipeController {
     }
   }
 
+  async getRecipeStatistics(req, res) {
+    try {
+      const recipeCount = await Recipe.find({}).countDocuments();
+      const recipeViews = await Recipe.aggregate([
+        {
+          $group: {
+            _id: null,
+            total: {
+              $sum: "$views",
+            },
+          },
+        },
+      ]);
+      const mostPopularRecipe = await Recipe.find()
+        .sort({ views: -1 })
+        .limit(1);
+      res.json({ recipeCount, recipeViews, mostPopularRecipe });
+    } catch (err) {
+      return res.status(400).json({
+        message: err.message,
+      });
+    }
+  }
+
+  async getAllSortedRecipes(req, res) {
+    try {
+      const { order, orderBy } = req.query;
+      const allSortedRecipes = await recipeService.allSortedRecipes(
+        order,
+        orderBy
+      );
+      res.json({ allSortedRecipes });
+    } catch (err) {
+      return res.status(400).json({
+        message: err.message,
+      });
+    }
+  }
+
   async getRecipesForMain(req, res) {
     try {
       const { limit, type } = req.query;
@@ -259,7 +298,11 @@ class RecipeController {
   }
   async deleteRecipes(req, res) {
     try {
-      const recipe = await Recipe.findById(req.query[0]);
+      let recipe;
+      recipe = await Recipe.findById(req.query[0]);
+      if (!recipe) {
+        recipe = await Recipe.findById(req.query._id);
+      }
       const deletedRecipes = await recipeService.deleteRecipes(recipe);
       res.json(deletedRecipes);
     } catch (e) {

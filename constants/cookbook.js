@@ -5,6 +5,8 @@ const CookBookRoutes = {
   get: "/get",
   getFilteredCookbooks: "/get-filtered-cookbooks",
   getCookbooksForMain: "/get-cookbooks-for-main",
+  getCookbookStatistics: "/get-cookbook-statistics",
+  getAllSortedCookbooks: "/get-all-sorted-cookbooks",
   updateComments: "/update-comments",
   update: "/update",
   updateLikes: "/update-likes",
