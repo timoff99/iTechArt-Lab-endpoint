@@ -24,6 +24,8 @@ router.get(
   auth,
   controller.getFilteredRecipes
 );
+router.get(RecipeRoutes.getRecipeStatistics, controller.getRecipeStatistics);
+router.get(RecipeRoutes.getAllSortedRecipes, controller.getAllSortedRecipes);
 router.get(RecipeRoutes.getRecipesForMain, controller.getRecipesForMain);
 router.put(RecipeRoutes.updateRecipeComments, controller.updateRecipeComments);
 router.put(

@@ -7,6 +7,7 @@ const router = new Router();
 
 router.get(UserRoutes.getAllUsers, controller.getAllUsers);
 router.get(UserRoutes.getUser, auth, controller.getUser);
+router.get(UserRoutes.getUserStatistics, auth, controller.getUserStatistics);
 router.put(UserRoutes.updateUser, auth, controller.updateUser);
 router.put(
   UserRoutes.updateUserCookbooks,

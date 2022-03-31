@@ -1,5 +1,6 @@
 const CookBook = require("../models/CookBook");
 const cloudinary = require("../utils/cloudinary");
+const { stableSort, getComparator } = require("../utils/tableSort");
 
 class CookBookService {
   async addCookBook(
@@ -115,6 +116,14 @@ class CookBookService {
     }
   }
 
+  async allSortedCookbooks(order, orderBy) {
+    try {
+      const allCookbooks = await CookBook.find({});
+      return stableSort(allCookbooks, getComparator(order, orderBy));
+    } catch (err) {
+      console.log(err);
+    }
+  }
   async updateCookBook(cookBook, req) {
     try {
       const data = {
@@ -138,10 +147,10 @@ class CookBookService {
     }
   }
 
-  async deleteCookBook(cookBook) {
+  async deleteCookBook(cookbook) {
     try {
-      await cloudinary.uploader.destroy(cookBook.cloudinary_id);
-      await cookBook.remove();
+      await cloudinary.uploader.destroy(cookbook.cloudinary_id);
+      await cookbook.remove();
       return true;
     } catch (err) {
       console.log(err);

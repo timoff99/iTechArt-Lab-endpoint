@@ -1,6 +1,7 @@
 const UserRoutes = {
   getAllUsers: "/get-all-users",
   getUser: "/get-user",
+  getUserStatistics: "/get-user-statistics",
   updateUser: "/update-user",
   updateUserCookbooks: "/update-user-cookbooks",
   updateUserRecipes: "/update-user-recipes",

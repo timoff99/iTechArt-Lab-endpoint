@@ -20,6 +20,14 @@ router.get(
   auth,
   controller.getFilteredCookBook
 );
+router.get(
+  CookBookRoutes.getCookbookStatistics,
+  controller.getCookbookStatistics
+);
+router.get(
+  CookBookRoutes.getAllSortedCookbooks,
+  controller.getAllSortedCookbooks
+);
 router.get(CookBookRoutes.getCookbooksForMain, controller.getCookBooksForMain);
 router.put(CookBookRoutes.updateComments, controller.updateCookBookComments);
 router.put(CookBookRoutes.update, controller.updateCookBook);
