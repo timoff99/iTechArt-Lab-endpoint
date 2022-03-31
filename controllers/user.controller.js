@@ -27,7 +27,7 @@ class UserController {
       user_status: "deleted",
     }).countDocuments();
 
-    const countMostActiveCookbookUser = await User.aggregate([
+    const [countMostActiveCookbookUser] = await User.aggregate([
       {
         $group: {
           _id: null,
@@ -35,8 +35,7 @@ class UserController {
         },
       },
     ]);
-
-    const countMostActiveRecipeUser = await User.aggregate([
+    const [countMostActiveRecipeUser] = await User.aggregate([
       {
         $group: {
           _id: null,
@@ -46,11 +45,11 @@ class UserController {
     ]);
 
     const mostActiveCookbookUser = await User.find({
-      cookbook_id: { $size: countMostActiveCookbookUser[0].max },
+      cookbook_id: { $size: countMostActiveCookbookUser.max },
     });
 
     const mostActiveRecipeUser = await User.find({
-      recipe_id: { $size: countMostActiveRecipeUser[0].max },
+      recipe_id: { $size: countMostActiveRecipeUser.max },
     });
     return res.json({
       allUsersCount,
