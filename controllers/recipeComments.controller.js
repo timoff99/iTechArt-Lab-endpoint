@@ -16,5 +16,14 @@ class RecipeCommentsController {
       res.status(400).json({ message: e.message });
     }
   }
+  async deleteComments(req, res) {
+    try {
+      const _id = req.query._id;
+      const deletedComment = await recipeCommentsService.deleteComments(_id);
+      return res.json(deletedComment);
+    } catch (e) {
+      res.status(400).json({ message: e.message });
+    }
+  }
 }
 module.exports = new RecipeCommentsController();

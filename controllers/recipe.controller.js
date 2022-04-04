@@ -87,7 +87,11 @@ class RecipeController {
 
   async getRecipe(req, res) {
     try {
-      const _id = req.query[0];
+      let _id;
+      _id = req.query[0];
+      if (!_id) {
+        _id = req.query._id;
+      }
       const recipes = await Recipe.findByIdAndUpdate(
         _id,
         { $inc: { views: 1 } },

@@ -84,7 +84,11 @@ class CookBookController {
 
   async getCookBook(req, res) {
     try {
-      const _id = req.query[0];
+      let _id;
+      _id = req.query[0];
+      if (!_id) {
+        _id = req.query._id;
+      }
       const cookBook = await CookBook.findByIdAndUpdate(
         _id,
         { $inc: { views: 1 } },
