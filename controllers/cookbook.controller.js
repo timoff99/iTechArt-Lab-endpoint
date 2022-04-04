@@ -84,11 +84,7 @@ class CookBookController {
 
   async getCookBook(req, res) {
     try {
-      let _id;
-      _id = req.query[0];
-      if (!_id) {
-        _id = req.query._id;
-      }
+      const { _id } = req.query;
       const cookBook = await CookBook.findByIdAndUpdate(
         _id,
         { $inc: { views: 1 } },
@@ -217,9 +213,9 @@ class CookBookController {
   async updateCookBookLikes(req, res) {
     try {
       const { id } = req.user;
-      const _id = req.query[0];
+      const { _id } = req.query;
       const exists = await CookBook.find({
-        _id: _id,
+        _id,
         likes: { $exists: true, $in: [id] },
       });
       let updatedCookBook;
@@ -264,11 +260,8 @@ class CookBookController {
 
   async deleteCookBook(req, res) {
     try {
-      let cookbook;
-      cookbook = await CookBook.findById(req.query[0]);
-      if (!cookbook) {
-        cookbook = await CookBook.findById(req.query._id);
-      }
+      const { _id } = req.query;
+      const cookbook = await CookBook.findById(_id);
       const deletedCookBook = await cookBookService.deleteCookBook(cookbook);
       res.json(deletedCookBook);
     } catch (e) {
