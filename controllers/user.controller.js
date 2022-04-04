@@ -129,6 +129,18 @@ class UserController {
       res.status(400).json({ message: e.message });
     }
   }
+  async deleteUser(req, res) {
+    try {
+      const { _id } = req.query;
+      const user = await User.findById(_id);
+      const deletedUser = await userService.deleteUser(user);
+      res.json(deletedUser);
+    } catch (e) {
+      return res.status(400).json({
+        message: e.message,
+      });
+    }
+  }
 
   async resetPass(req, res) {
     try {

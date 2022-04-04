@@ -26,6 +26,7 @@ router.delete(
   auth,
   controller.deleteUserRecipeId
 );
+router.delete(UserRoutes.delete, controller.deleteUser);
 router.put(UserRoutes.resetPassword, controller.resetPass);
 
 module.exports = router;

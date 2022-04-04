@@ -8,6 +8,7 @@ const UserRoutes = {
   updateUserStatus: "/update-user-status",
   deleteUserCookbookId: "/delete-user-cookbook-id",
   deleteUserRecipesId: "/delete-user-recipes-id",
+  delete: "/delete",
   resetPassword: "/reset-password",
 };
 

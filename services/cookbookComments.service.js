@@ -16,6 +16,16 @@ class CookBookCommentsService {
       res.status(400).json({ message: e.message });
     }
   }
+
+  async deleteComments(_id) {
+    try {
+      const comment = await CookBookComments.findById(_id);
+      await comment.remove();
+      return true;
+    } catch (e) {
+      res.status(400).json({ message: e.message });
+    }
+  }
 }
 
 module.exports = new CookBookCommentsService();

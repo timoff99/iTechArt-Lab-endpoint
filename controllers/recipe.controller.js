@@ -87,7 +87,7 @@ class RecipeController {
 
   async getRecipe(req, res) {
     try {
-      const _id = req.query[0];
+      const { _id } = req.query;
       const recipes = await Recipe.findByIdAndUpdate(
         _id,
         { $inc: { views: 1 } },
@@ -257,9 +257,9 @@ class RecipeController {
   async updateRecipeLikes(req, res) {
     try {
       const { id } = req.user;
-      const _id = req.query[0];
+      const { _id } = req.query;
       const exists = await Recipe.find({
-        _id: _id,
+        _id,
         likes: { $exists: true, $in: [id] },
       });
       let updatedRecipe;
@@ -298,11 +298,8 @@ class RecipeController {
   }
   async deleteRecipes(req, res) {
     try {
-      let recipe;
-      recipe = await Recipe.findById(req.query[0]);
-      if (!recipe) {
-        recipe = await Recipe.findById(req.query._id);
-      }
+      const { _id } = req.query;
+      const recipe = await Recipe.findById(_id);
       const deletedRecipes = await recipeService.deleteRecipes(recipe);
       res.json(deletedRecipes);
     } catch (e) {

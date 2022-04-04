@@ -39,7 +39,6 @@ class UserService {
       });
       return stabilizedThis.map((el) => el[0]);
     };
-
     let allUsers;
     if (status) {
       allUsers = await User.find({ user_status: status });
@@ -64,6 +63,16 @@ class UserService {
     }
     const hashPassword = bcrypt.hashSync(updatedFiled.newPassword, 7);
     return (updatedFiled = { password: hashPassword });
+  }
+
+  async deleteUser(user) {
+    try {
+      await cloudinary.uploader.destroy(user.cloudinary_id);
+      await user.remove();
+      return true;
+    } catch (err) {
+      console.log(err);
+    }
   }
 }
 
