@@ -14,6 +14,7 @@ const RecipeRoutes = {
   updateLikes: "/update-likes",
   deleteRecipeCookbookid: "/delete-recipe-cookbookid",
   delete: "/delete",
+  deleteCommentsId: "/delete-comments-id",
 };
 
 module.exports = { RecipeRoutes };

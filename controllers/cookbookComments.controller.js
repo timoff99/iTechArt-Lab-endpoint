@@ -19,7 +19,7 @@ class CookBookCommentsController {
 
   async deleteComments(req, res) {
     try {
-      const _id = req.query._id;
+      const { _id } = req.query;
       const deletedComment = await cookbookCommentsService.deleteComments(_id);
       return res.json(deletedComment);
     } catch (e) {

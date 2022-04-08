@@ -13,6 +13,8 @@ const imageRouter = require("./router/image.router");
 const cookbookCommentsRouter = require("./router/cookbookComments.router");
 const recipeCommentsRouter = require("./router/recipeComments.router");
 const mail = require("./router/mail.router");
+const cookbookCollectionRouter = require("./router/cookbookCollection.router");
+const recipeCollectionRouter = require("./router/recipeCollection.router");
 
 const PORT = process.env.PORT || 5000;
 const app = express();
@@ -34,6 +36,8 @@ app.use("/api/image", imageRouter);
 app.use("/api/cookbook-comments", auth, cookbookCommentsRouter);
 app.use("/api/recipe-comments", auth, recipeCommentsRouter);
 app.use("/api/mail", mail);
+app.use("/api/cookbook-collection", cookbookCollectionRouter);
+app.use("/api/recipe-collection", recipeCollectionRouter);
 
 const start = async () => {
   try {

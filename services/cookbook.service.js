@@ -116,9 +116,11 @@ class CookBookService {
     }
   }
 
-  async allSortedCookbooks(order, orderBy) {
+  async allSortedCookbooks(order, orderBy, search) {
     try {
-      const allCookbooks = await CookBook.find({});
+      const allCookbooks = search
+        ? await CookBook.find({ title: { $regex: search } }).populate("user_id")
+        : await CookBook.find({}).populate("user_id");
       return stableSort(allCookbooks, getComparator(order, orderBy));
     } catch (err) {
       console.log(err);

@@ -39,5 +39,6 @@ router.delete(
   controller.deleteRecipesCookBookId
 );
 router.delete(RecipeRoutes.delete, controller.deleteRecipes);
+router.delete(RecipeRoutes.deleteCommentsId, controller.deleteRecipeCommentsId);
 
 module.exports = router;
