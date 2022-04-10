@@ -1,6 +1,7 @@
 const CookBookRoutes = {
   create: "/create",
   createClone: "/create-clone",
+  getAllCookBooks: "/get-all",
   getUserCookbooks: "/get-user-cookbooks",
   get: "/get",
   getFilteredCookbooks: "/get-filtered-cookbooks",

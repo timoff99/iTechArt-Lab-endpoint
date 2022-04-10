@@ -4,9 +4,8 @@ const cloudinary = require("../utils/cloudinary");
 class RecipeCollectionController {
   async createCollection(req, res) {
     try {
-      const { type, title, image, cloudinary_id, collection_arr } = req.body;
+      const { title, image, cloudinary_id, collection_arr } = req.body;
       const newCollection = await recipeCollectionService.createCollection(
-        type,
         title,
         image,
         cloudinary_id,

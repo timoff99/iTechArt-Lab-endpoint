@@ -1,10 +1,9 @@
 const Collection = require("../models/RecipeCollection");
 
 class RecipeCollectionService {
-  async createCollection(type, title, image, cloudinary_id, collection_arr) {
+  async createCollection(title, image, cloudinary_id, collection_arr) {
     try {
       const createNewCollection = new Collection({
-        type,
         title,
         image,
         cloudinary_id,

@@ -63,6 +63,11 @@ class CookBookController {
     }
   }
 
+  async getAllCookBooks(req, res) {
+    const allCookbooks = await cookBookService.getAllCookbooks();
+    return res.json({ allCookbooks });
+  }
+
   async getUserCookBooks(req, res) {
     try {
       const PAGE_SIZE = 12;

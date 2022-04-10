@@ -65,6 +65,11 @@ class RecipeController {
     }
   }
 
+  async getAllRecipes(req, res) {
+    const allRecipes = await recipeService.getAllRecipes();
+    return res.json({ allRecipes });
+  }
+
   async getUserRecipes(req, res) {
     try {
       const PAGE_SIZE = 12;

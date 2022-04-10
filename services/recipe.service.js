@@ -34,6 +34,10 @@ class RecipeService {
     }
   }
 
+  async getAllRecipes() {
+    return Recipe.find({});
+  }
+
   async updateRecipeCookBookId(ids, cookbook_id) {
     try {
       const result = [];

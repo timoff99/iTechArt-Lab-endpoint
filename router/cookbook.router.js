@@ -13,6 +13,7 @@ router.post(
   controller.addCookBook
 );
 router.post(CookBookRoutes.createClone, auth, controller.addCookBookClone);
+router.get(CookBookRoutes.getAllCookBooks, controller.getAllCookBooks);
 router.get(CookBookRoutes.getUserCookbooks, auth, controller.getUserCookBooks);
 router.get(CookBookRoutes.get, controller.getCookBook);
 router.get(

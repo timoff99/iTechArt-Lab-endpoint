@@ -1,6 +1,7 @@
 const RecipeRoutes = {
   create: "/create",
   createClone: "/create-clone",
+  getAllRecipes: "/get-all",
   getUserRecipes: "/get-user-recipes",
   get: "/get",
   getRecipeWithoutCookbook: "/get-recipe-without-cookbook",

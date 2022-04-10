@@ -31,6 +31,11 @@ class CookBookService {
       console.log(err);
     }
   }
+
+  async getAllCookbooks() {
+    return CookBook.find({});
+  }
+
   async getFilteredCookBook(type, sort, search, id, PAGE_SIZE, page) {
     try {
       const compareSort = (a, b) => {

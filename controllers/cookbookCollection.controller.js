@@ -2,27 +2,66 @@ const cookbookCollectionService = require("../services/cookbookCollection.servic
 const cloudinary = require("../utils/cloudinary");
 
 class CookbookCollectionController {
+  async getAllCollection(req, res) {
+    try {
+      const getAllCollection =
+        await cookbookCollectionService.getAllCollection();
+      return res.json(getAllCollection);
+    } catch (e) {
+      res.status(400).json({ message: e.message });
+    }
+  }
+
+  async getOneCollection(req, res) {
+    try {
+      const { id } = req.query;
+      const getOneCollection = await cookbookCollectionService.getOneCollection(
+        id
+      );
+      return res.json(getOneCollection);
+    } catch (e) {
+      res.status(400).json({ message: e.message });
+    }
+  }
+
   async createCollection(req, res) {
     try {
-      const { type, title, image, cloudinary_id, collection_arr } = req.body;
+      const { title, image, cloudinary_id, collection } =
+        req.body.collectionData;
       const newCollection = await cookbookCollectionService.createCollection(
-        type,
         title,
         image,
         cloudinary_id,
-        collection_arr
+        collection
       );
       return res.json(newCollection);
     } catch (e) {
       res.status(400).json({ message: e.message });
     }
   }
+
   async deleteCollection(req, res) {
     try {
-      const { _id, collection_id } = req.body; //body //работает через query
+      const { collection_id, cloudinary_id } = req.body;
       const deletedCollection =
-        await cookbookCollectionService.deleteCollection(_id, collection_id);
+        await cookbookCollectionService.deleteCollection(
+          collection_id,
+          cloudinary_id
+        );
       return res.json(deletedCollection);
+    } catch (e) {
+      res.status(400).json({ message: e.message });
+    }
+  }
+  async deleteCollectionFiled(req, res) {
+    try {
+      const { collection_id, collection_filed_id } = req.body;
+      const deletedCollectionFiled =
+        await cookbookCollectionService.deleteCollectionFiled(
+          collection_id,
+          collection_filed_id
+        );
+      return res.json(deletedCollectionFiled);
     } catch (e) {
       res.status(400).json({ message: e.message });
     }
