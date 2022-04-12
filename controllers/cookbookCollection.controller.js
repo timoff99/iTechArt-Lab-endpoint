@@ -1,5 +1,4 @@
 const cookbookCollectionService = require("../services/cookbookCollection.service");
-const cloudinary = require("../utils/cloudinary");
 
 class CookbookCollectionController {
   async getAllCollection(req, res) {
@@ -7,6 +6,16 @@ class CookbookCollectionController {
       const getAllCollection =
         await cookbookCollectionService.getAllCollection();
       return res.json(getAllCollection);
+    } catch (e) {
+      res.status(400).json({ message: e.message });
+    }
+  }
+
+  async getFourCollection(req, res) {
+    try {
+      const getFourCollection =
+        await cookbookCollectionService.getFourCollection();
+      return res.json(getFourCollection);
     } catch (e) {
       res.status(400).json({ message: e.message });
     }
@@ -55,10 +64,11 @@ class CookbookCollectionController {
   }
   async deleteCollectionFiled(req, res) {
     try {
-      const { collection_id, collection_filed_id } = req.body;
+      const { collection_id, cloudinary_id, collection_filed_id } = req.body;
       const deletedCollectionFiled =
         await cookbookCollectionService.deleteCollectionFiled(
           collection_id,
+          cloudinary_id,
           collection_filed_id
         );
       return res.json(deletedCollectionFiled);

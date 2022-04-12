@@ -5,16 +5,24 @@ class CookbookCollectionService {
   async getAllCollection() {
     try {
       return await Collection.find({});
-    } catch (e) {
-      res.status(400).json({ message: e.message });
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async getFourCollection() {
+    try {
+      return await Collection.find({}).limit(4);
+    } catch (err) {
+      console.log(err);
     }
   }
 
   async getOneCollection(id) {
     try {
       return await Collection.findOne({ _id: id }).populate("collection_arr");
-    } catch (e) {
-      res.status(400).json({ message: e.message });
+    } catch (err) {
+      console.log(err);
     }
   }
 
@@ -28,8 +36,8 @@ class CookbookCollectionService {
       });
       const newCollection = await createNewCollection.save();
       return newCollection;
-    } catch (e) {
-      res.status(400).json({ message: e.message });
+    } catch (err) {
+      console.log(err);
     }
   }
 
@@ -38,25 +46,37 @@ class CookbookCollectionService {
       if (cloudinary_id) {
         await cloudinary.uploader.destroy(cloudinary_id);
       }
-      const deletedCollectionFiled = await Collection.deleteOne({
-        collection_id,
+      const deletedCollection = await Collection.findOneAndDelete({
+        _id: collection_id,
       });
 
-      return deletedCollectionFiled;
-    } catch (e) {
-      res.status(400).json({ message: e.message });
+      return deletedCollection;
+    } catch (err) {
+      console.log(err);
     }
   }
-  async deleteCollectionFiled(collection_id, collection_filed_id) {
+  async deleteCollectionFiled(
+    collection_id,
+    cloudinary_id,
+    collection_filed_id
+  ) {
     try {
-      const deletedCollectionFiled = await Collection.updateOne({
-        collection_id,
-        $pull: { collection_arr: collection_filed_id },
+      const [CollectionFiledsCount] = await Collection.find({
+        _id: collection_id,
       });
-
-      return deletedCollectionFiled;
-    } catch (e) {
-      res.status(400).json({ message: e.message });
+      if (CollectionFiledsCount.collection_arr.length <= 1) {
+        await cloudinary.uploader.destroy(cloudinary_id);
+        const deletedCollectionFiled = await Collection.findOneAndDelete({
+          _id: collection_id,
+        });
+        return deletedCollectionFiled;
+      }
+      return await Collection.updateOne(
+        { _id: collection_id },
+        { $pull: { collection_arr: collection_filed_id } }
+      );
+    } catch (err) {
+      console.log(err);
     }
   }
 }
