@@ -5,8 +5,9 @@ const jwt = require("jsonwebtoken");
 
 class UserController {
   async getAllUsers(req, res) {
-    const { order, orderBy } = req.query;
+    const { search, order, orderBy } = req.query;
     const allUsers = await userService.getAllUsers(
+      search,
       req?.query?.status,
       order,
       orderBy
@@ -69,7 +70,7 @@ class UserController {
       }
       const updateUser = await User.findByIdAndUpdate(id, updatedFiled, {
         new: true,
-      });
+      }).populate("roles");
       return res.json({ updateUser });
     } catch (e) {
       res.status(400).json({ message: e.message });

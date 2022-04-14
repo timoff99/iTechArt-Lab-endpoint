@@ -1,6 +1,7 @@
 const RecipeRoutes = {
   create: "/create",
   createClone: "/create-clone",
+  getAllRecipes: "/get-all",
   getUserRecipes: "/get-user-recipes",
   get: "/get",
   getRecipeWithoutCookbook: "/get-recipe-without-cookbook",
@@ -14,6 +15,7 @@ const RecipeRoutes = {
   updateLikes: "/update-likes",
   deleteRecipeCookbookid: "/delete-recipe-cookbookid",
   delete: "/delete",
+  deleteCommentsId: "/delete-comments-id",
 };
 
 module.exports = { RecipeRoutes };

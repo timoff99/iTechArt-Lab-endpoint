@@ -63,6 +63,11 @@ class CookBookController {
     }
   }
 
+  async getAllCookBooks(req, res) {
+    const allCookbooks = await cookBookService.getAllCookbooks();
+    return res.json({ allCookbooks });
+  }
+
   async getUserCookBooks(req, res) {
     try {
       const PAGE_SIZE = 12;
@@ -180,10 +185,11 @@ class CookBookController {
   }
   async getAllSortedCookbooks(req, res) {
     try {
-      const { order, orderBy } = req.query;
+      const { order, orderBy, search } = req.query;
       const allSortedCookbooks = await cookBookService.allSortedCookbooks(
         order,
-        orderBy
+        orderBy,
+        search
       );
       res.json({ allSortedCookbooks });
     } catch (err) {
@@ -264,6 +270,23 @@ class CookBookController {
       const cookbook = await CookBook.findById(_id);
       const deletedCookBook = await cookBookService.deleteCookBook(cookbook);
       res.json(deletedCookBook);
+    } catch (e) {
+      return res.status(400).json({
+        message: e.message,
+      });
+    }
+  }
+
+  async deleteCookBookCommentsId(req, res) {
+    try {
+      const { card_id, comment_id } = req.query;
+      const deletedCookBookCommentId = await CookBook.findOneAndUpdate(
+        { _id: card_id },
+        {
+          $pull: { comments: comment_id },
+        }
+      );
+      res.json(deletedCookBookCommentId);
     } catch (e) {
       return res.status(400).json({
         message: e.message,

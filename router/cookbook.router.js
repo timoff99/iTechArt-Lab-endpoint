@@ -13,6 +13,7 @@ router.post(
   controller.addCookBook
 );
 router.post(CookBookRoutes.createClone, auth, controller.addCookBookClone);
+router.get(CookBookRoutes.getAllCookBooks, controller.getAllCookBooks);
 router.get(CookBookRoutes.getUserCookbooks, auth, controller.getUserCookBooks);
 router.get(CookBookRoutes.get, controller.getCookBook);
 router.get(
@@ -33,5 +34,9 @@ router.put(CookBookRoutes.updateComments, controller.updateCookBookComments);
 router.put(CookBookRoutes.update, controller.updateCookBook);
 router.put(CookBookRoutes.updateLikes, auth, controller.updateCookBookLikes);
 router.delete(CookBookRoutes.delete, controller.deleteCookBook);
+router.delete(
+  CookBookRoutes.deleteCommentsId,
+  controller.deleteCookBookCommentsId
+);
 
 module.exports = router;

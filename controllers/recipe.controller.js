@@ -65,6 +65,11 @@ class RecipeController {
     }
   }
 
+  async getAllRecipes(req, res) {
+    const allRecipes = await recipeService.getAllRecipes();
+    return res.json({ allRecipes });
+  }
+
   async getUserRecipes(req, res) {
     try {
       const PAGE_SIZE = 12;
@@ -144,10 +149,11 @@ class RecipeController {
 
   async getAllSortedRecipes(req, res) {
     try {
-      const { order, orderBy } = req.query;
+      const { order, orderBy, search } = req.query;
       const allSortedRecipes = await recipeService.allSortedRecipes(
         order,
-        orderBy
+        orderBy,
+        search
       );
       res.json({ allSortedRecipes });
     } catch (err) {
@@ -302,6 +308,23 @@ class RecipeController {
       const recipe = await Recipe.findById(_id);
       const deletedRecipes = await recipeService.deleteRecipes(recipe);
       res.json(deletedRecipes);
+    } catch (e) {
+      return res.status(400).json({
+        message: e.message,
+      });
+    }
+  }
+
+  async deleteRecipeCommentsId(req, res) {
+    try {
+      const { card_id, comment_id } = req.query;
+      const deletedRecipesCommentId = await Recipe.findOneAndUpdate(
+        { _id: card_id },
+        {
+          $pull: { comments: comment_id },
+        }
+      );
+      res.json(deletedRecipesCommentId);
     } catch (e) {
       return res.status(400).json({
         message: e.message,

@@ -2,7 +2,7 @@ const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 
 class UserService {
-  async getAllUsers(status, order, orderBy) {
+  async getAllUsers(search, status, order, orderBy) {
     const descendingComparator = (a, b, orderBy) => {
       if (orderBy === "cookbook_id" || orderBy === "recipe_id") {
         if (b[orderBy].length < a[orderBy].length) {
@@ -41,9 +41,12 @@ class UserService {
     };
     let allUsers;
     if (status) {
-      allUsers = await User.find({ user_status: status });
+      allUsers = await User.find({
+        username: { $regex: search },
+        user_status: status,
+      });
     } else {
-      allUsers = await User.find({});
+      allUsers = await User.find({ username: { $regex: search } });
     }
     return stableSort(allUsers, getComparator(order, orderBy));
   }

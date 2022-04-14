@@ -1,6 +1,7 @@
 const CookBookRoutes = {
   create: "/create",
   createClone: "/create-clone",
+  getAllCookBooks: "/get-all",
   getUserCookbooks: "/get-user-cookbooks",
   get: "/get",
   getFilteredCookbooks: "/get-filtered-cookbooks",
@@ -11,6 +12,7 @@ const CookBookRoutes = {
   update: "/update",
   updateLikes: "/update-likes",
   delete: "/delete",
+  deleteCommentsId: "/delete-comments-id",
 };
 
 module.exports = { CookBookRoutes };

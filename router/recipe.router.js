@@ -13,6 +13,7 @@ router.post(
   controller.addRecipe
 );
 router.post(RecipeRoutes.createClone, auth, controller.addRecipeClone);
+router.get(RecipeRoutes.getAllRecipes, controller.getAllRecipes);
 router.get(RecipeRoutes.getUserRecipes, auth, controller.getUserRecipes);
 router.get(RecipeRoutes.get, controller.getRecipe);
 router.get(
@@ -39,5 +40,6 @@ router.delete(
   controller.deleteRecipesCookBookId
 );
 router.delete(RecipeRoutes.delete, controller.deleteRecipes);
+router.delete(RecipeRoutes.deleteCommentsId, controller.deleteRecipeCommentsId);
 
 module.exports = router;

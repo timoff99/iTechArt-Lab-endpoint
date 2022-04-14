@@ -34,6 +34,10 @@ class RecipeService {
     }
   }
 
+  async getAllRecipes() {
+    return Recipe.find({});
+  }
+
   async updateRecipeCookBookId(ids, cookbook_id) {
     try {
       const result = [];
@@ -116,9 +120,11 @@ class RecipeService {
     }
   }
 
-  async allSortedRecipes(order, orderBy) {
+  async allSortedRecipes(order, orderBy, search) {
     try {
-      const allRecipes = await Recipe.find({});
+      const allRecipes = await Recipe.find({
+        title: { $regex: search },
+      }).populate("user_id");
       return stableSort(allRecipes, getComparator(order, orderBy));
     } catch (err) {
       console.log(err);
