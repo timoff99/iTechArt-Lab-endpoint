@@ -19,7 +19,7 @@ class mailService {
       const send = await this.transporter.sendMail({
         from: process.env.SMTP_USER,
         to,
-        subject: `Hello ✔ from ${process.env.API_URL}`,
+        subject: `Hello ✔ from ${process.env.PORT || process.env.API_URL}`,
         text: "Hello world?",
         html: ` <div>
             <h1>Для восстановления пароля перейдите по ссылке</h1>
