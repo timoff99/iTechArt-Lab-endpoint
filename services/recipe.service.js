@@ -72,6 +72,31 @@ class RecipeService {
       console.log(err);
     }
   }
+
+  async getUserRecipes(search, page, id, PAGE_SIZE) {
+    try {
+      let recipes;
+      if (search[0]) {
+        recipes = await Recipe.find({
+          user_id: id,
+          title: { $regex: search[0], $options: "i" },
+        })
+          .skip(page * PAGE_SIZE)
+          .limit(PAGE_SIZE)
+          .populate("comments");
+      } else {
+        recipes = await Recipe.find({
+          user_id: id,
+        })
+          .skip(page * PAGE_SIZE)
+          .limit(PAGE_SIZE)
+          .populate("comments");
+      }
+      return recipes;
+    } catch (err) {
+      console.log(err);
+    }
+  }
   async getFilteredRecipes(timeRange, search, sort, page, PAGE_SIZE) {
     try {
       const compareSort = (a, b) => {
@@ -89,7 +114,7 @@ class RecipeService {
         let recipe;
         if (search[0]) {
           recipe = await Recipe.find({
-            title: { $regex: search[0] },
+            title: { $regex: search[0], $options: "i" },
             cooking_time: { $gte: timeRange[0], $lte: timeRange[1] },
           })
             .skip(page * PAGE_SIZE)
@@ -123,7 +148,7 @@ class RecipeService {
   async allSortedRecipes(order, orderBy, search) {
     try {
       const allRecipes = await Recipe.find({
-        title: { $regex: search },
+        title: { $regex: search, $options: "i" },
       }).populate("user_id");
       return stableSort(allRecipes, getComparator(order, orderBy));
     } catch (err) {

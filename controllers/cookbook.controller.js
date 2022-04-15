@@ -71,13 +71,16 @@ class CookBookController {
   async getUserCookBooks(req, res) {
     try {
       const PAGE_SIZE = 12;
-      const total = await CookBook.countDocuments({ user_id: req.user.id });
+      const { search } = req.query;
+      const { id } = req.user;
+      const total = await CookBook.countDocuments({ user_id: id });
       const page = parseInt(req.query.page || "0");
-      const cookBook = await CookBook.find({ user_id: req.user.id })
-        .skip(page * PAGE_SIZE)
-        .limit(PAGE_SIZE)
-        .populate("comments")
-        .populate("recipes");
+      const cookBook = await cookBookService.getUserCookBooks(
+        search,
+        page,
+        id,
+        PAGE_SIZE
+      );
       const totalPages = Math.ceil(total / PAGE_SIZE);
       res.json({ cookBook, totalPages });
     } catch (e) {

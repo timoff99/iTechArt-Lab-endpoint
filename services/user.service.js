@@ -42,11 +42,13 @@ class UserService {
     let allUsers;
     if (status) {
       allUsers = await User.find({
-        username: { $regex: search },
+        username: { $regex: search, $options: "i" },
         user_status: status,
       });
     } else {
-      allUsers = await User.find({ username: { $regex: search } });
+      allUsers = await User.find({
+        username: { $regex: search, $options: "i" },
+      });
     }
     return stableSort(allUsers, getComparator(order, orderBy));
   }

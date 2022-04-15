@@ -73,13 +73,16 @@ class RecipeController {
   async getUserRecipes(req, res) {
     try {
       const PAGE_SIZE = 12;
-      const total = await Recipe.countDocuments({ user_id: req.user.id });
+      const { search } = req.query;
+      const { id } = req.user;
+      const total = await Recipe.countDocuments({ user_id: id });
       const page = parseInt(req.query.page || "0");
-
-      const recipes = await Recipe.find({ user_id: req.user.id })
-        .skip(page * PAGE_SIZE)
-        .limit(PAGE_SIZE)
-        .populate("comments");
+      const recipes = await recipeService.getUserRecipes(
+        search,
+        page,
+        id,
+        PAGE_SIZE
+      );
       const totalPages = Math.ceil(total / PAGE_SIZE);
 
       res.json({ recipes, totalPages });
