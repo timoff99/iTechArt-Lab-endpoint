@@ -36,7 +36,7 @@ class CookBookController {
       const {
         title,
         description,
-        username,
+        author,
         image,
         cloudinary_id,
         recipes,
@@ -45,7 +45,7 @@ class CookBookController {
       const clone = new CookBook({
         title,
         description,
-        username,
+        author,
         image,
         views: 0,
         likes: [],
