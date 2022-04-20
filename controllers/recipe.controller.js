@@ -36,7 +36,7 @@ class RecipeController {
       const {
         title,
         description,
-        username,
+        author,
         ingredients,
         steps,
         cooking_time,
@@ -46,7 +46,7 @@ class RecipeController {
       const clone = new Recipe({
         title,
         description,
-        username,
+        author,
         ingredients,
         steps,
         views: 0,
@@ -117,7 +117,11 @@ class RecipeController {
 
   async getRecipeWithoutCookBook(req, res) {
     try {
-      const recipes = await Recipe.find({ cookbook_id: { $exists: false } });
+      const { id } = req.user;
+      const recipes = await Recipe.find({
+        cookbook_id: { $exists: false },
+        user_id: id,
+      });
       res.json(recipes);
     } catch (e) {
       return res.status(400).json({
