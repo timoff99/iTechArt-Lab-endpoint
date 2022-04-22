@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
+const { Server } = require("socket.io");
 const authRouter = require("./router/auth.router");
 const roleRouter = require("./router/role.router");
 const userRouter = require("./router/user.router");
@@ -16,8 +17,18 @@ const mail = require("./router/mail.router");
 const cookbookCollectionRouter = require("./router/cookbookCollection.router");
 const recipeCollectionRouter = require("./router/recipeCollection.router");
 
+const CookBookComments = require("./models/CookBookComments");
+const CookBook = require("./models/CookBook");
+
 const PORT = process.env.PORT || 5000;
 const app = express();
+const server = require("http").createServer(app);
+const io = new Server(server, {
+  cors: {
+    credentials: true,
+    origin: [process.env.CLIENT_URL, process.env.ADMIN_URL],
+  },
+});
 
 app.use(express.json());
 app.use(
@@ -42,7 +53,7 @@ app.use("/api/recipe-collection", recipeCollectionRouter);
 const start = async () => {
   try {
     await mongoose.connect(process.env.DB_URL);
-    app.listen(PORT, () =>
+    server.listen(PORT, () =>
       console.log(`server has been started on port ${PORT}`)
     );
   } catch (e) {
@@ -51,3 +62,52 @@ const start = async () => {
 };
 
 start();
+
+io.on("connection", (socket) => {
+  console.log("User connected", socket.id);
+  let room;
+  socket.on("join:room", (roomId) => {
+    socket.join(roomId);
+    room = roomId;
+    console.log(`User with ID ${socket.id} joined room: ${roomId}`);
+  });
+
+  socket.on("leave:room", (roomId) => {
+    console.log(`User with ID ${socket.id} leave room: ${roomId}`);
+    socket.leave(roomId);
+  });
+
+  socket.on("comment:send", async ({ message, user_id, parent_id }) => {
+    const createNewCookbookComment = new CookBookComments({
+      message,
+      parent_id,
+      user_id,
+      time: new Date(),
+    });
+    const newCookbookComment = await createNewCookbookComment.save();
+    const updatedCookBook = await CookBook.findOneAndUpdate(
+      { _id: parent_id },
+      {
+        $push: { comments: newCookbookComment._id },
+      }
+    );
+
+    const cookBook = await CookBook.findByIdAndUpdate({ _id: parent_id })
+      .populate("recipes")
+      .populate({
+        path: "comments",
+        populate: {
+          path: "user_id",
+        },
+      });
+
+    io.to(room).emit("comment_receive", cookBook);
+  });
+  socket.on("user:typing", (nikName) => {
+    socket.broadcast.to(room).emit("user:typing", nikName);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("User disconnected", socket.id);
+  });
+});

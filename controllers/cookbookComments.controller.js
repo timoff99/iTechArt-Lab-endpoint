@@ -10,7 +10,6 @@ class CookBookCommentsController {
         id,
         parent_id
       );
-
       return res.json(newCookbookComment);
     } catch (e) {
       res.status(400).json({ message: e.message });

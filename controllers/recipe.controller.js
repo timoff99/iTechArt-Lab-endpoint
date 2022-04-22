@@ -199,11 +199,13 @@ class RecipeController {
     try {
       const PAGE_SIZE = 12;
       const page = parseInt(req.query.page || "0");
-      const { timeRange, search, sort } = req.query;
-
+      const { id } = req.user;
+      const { type, timeRange, search, sort } = req.query;
       const { recipe, total } = await recipeService.getFilteredRecipes(
+        type,
         timeRange,
         search,
+        id,
         sort,
         page,
         PAGE_SIZE
