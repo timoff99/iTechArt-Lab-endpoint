@@ -18,7 +18,9 @@ const cookbookCollectionRouter = require("./router/cookbookCollection.router");
 const recipeCollectionRouter = require("./router/recipeCollection.router");
 
 const CookBookComments = require("./models/CookBookComments");
+const RecipesComments = require("./models/RecipesComments");
 const CookBook = require("./models/CookBook");
+const Recipe = require("./models/Recipe");
 
 const PORT = process.env.PORT || 5000;
 const app = express();
@@ -77,32 +79,59 @@ io.on("connection", (socket) => {
     socket.leave(roomId);
   });
 
-  socket.on("comment:send", async ({ message, user_id, parent_id }) => {
-    const createNewCookbookComment = new CookBookComments({
-      message,
-      parent_id,
-      user_id,
-      time: new Date(),
-    });
-    const newCookbookComment = await createNewCookbookComment.save();
-    const updatedCookBook = await CookBook.findOneAndUpdate(
-      { _id: parent_id },
-      {
-        $push: { comments: newCookbookComment._id },
+  socket.on(
+    "comment:send",
+    async ({ message, user_id, parent_id, flag = "cookbook" }) => {
+      let data;
+      if (flag === "cookbook") {
+        const createNewCookbookComment = new CookBookComments({
+          message,
+          parent_id,
+          user_id,
+          time: new Date(),
+        });
+        const newCookbookComment = await createNewCookbookComment.save();
+        const updatedCookBook = await CookBook.findOneAndUpdate(
+          { _id: parent_id },
+          {
+            $push: { comments: newCookbookComment._id },
+          }
+        );
+
+        data = await CookBook.findByIdAndUpdate({ _id: parent_id })
+          .populate("recipes")
+          .populate({
+            path: "comments",
+            populate: {
+              path: "user_id",
+            },
+          });
+      } else {
+        const createNewRecipeComment = new RecipesComments({
+          message,
+          parent_id,
+          user_id,
+          time: new Date(),
+        });
+
+        const newRecipeComment = await createNewRecipeComment.save();
+        const updatedRecipe = await Recipe.findOneAndUpdate(
+          { _id: parent_id },
+          {
+            $push: { comments: newRecipeComment._id },
+          }
+        );
+
+        data = await Recipe.findByIdAndUpdate({ _id: parent_id }).populate({
+          path: "comments",
+          populate: {
+            path: "user_id",
+          },
+        });
       }
-    );
-
-    const cookBook = await CookBook.findByIdAndUpdate({ _id: parent_id })
-      .populate("recipes")
-      .populate({
-        path: "comments",
-        populate: {
-          path: "user_id",
-        },
-      });
-
-    io.to(room).emit("comment_receive", cookBook);
-  });
+      io.to(room).emit("comment_receive", data);
+    }
+  );
   socket.on("user:typing", (nikName) => {
     socket.broadcast.to(room).emit("user:typing", nikName);
   });

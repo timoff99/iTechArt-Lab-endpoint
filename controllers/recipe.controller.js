@@ -115,6 +115,24 @@ class RecipeController {
     }
   }
 
+  async getRecipeWithoutViewsPlusOne(req, res) {
+    try {
+      const { _id } = req.query;
+      const recipes = await Recipe.find({ _id }).populate({
+        path: "comments",
+        populate: {
+          path: "user_id",
+        },
+      });
+
+      res.json(...recipes);
+    } catch (e) {
+      return res.status(400).json({
+        message: e.message,
+      });
+    }
+  }
+
   async getRecipeWithoutCookBook(req, res) {
     try {
       const { id } = req.user;

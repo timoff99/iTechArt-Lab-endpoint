@@ -1,5 +1,4 @@
 const CookBookCommentsRoutes = {
-  create: "/create",
   delete: "/delete",
 };
 

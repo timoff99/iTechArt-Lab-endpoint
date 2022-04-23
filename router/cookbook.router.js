@@ -17,6 +17,10 @@ router.get(CookBookRoutes.getAllCookBooks, controller.getAllCookBooks);
 router.get(CookBookRoutes.getUserCookbooks, auth, controller.getUserCookBooks);
 router.get(CookBookRoutes.get, controller.getCookBook);
 router.get(
+  CookBookRoutes.getCookBookWithoutViewsPlusOne,
+  controller.getCookBookWithoutViewsPlusOne
+);
+router.get(
   CookBookRoutes.getFilteredCookbooks,
   auth,
   controller.getFilteredCookBook

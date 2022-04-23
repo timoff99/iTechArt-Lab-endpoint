@@ -113,6 +113,25 @@ class CookBookController {
     }
   }
 
+  async getCookBookWithoutViewsPlusOne(req, res) {
+    try {
+      const { _id } = req.query;
+      const cookBook = await CookBook.find({ _id })
+        .populate("recipes")
+        .populate({
+          path: "comments",
+          populate: {
+            path: "user_id",
+          },
+        });
+      res.json(...cookBook);
+    } catch (e) {
+      return res.status(400).json({
+        message: e.message,
+      });
+    }
+  }
+
   async getCookBooksForMain(req, res) {
     try {
       const { limit, type } = req.query;

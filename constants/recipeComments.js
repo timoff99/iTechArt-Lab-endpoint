@@ -1,5 +1,4 @@
 const RecipeCommentsRoutes = {
-  create: "/create",
   delete: "/delete",
 };
 
