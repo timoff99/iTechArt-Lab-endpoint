@@ -115,6 +115,24 @@ class RecipeController {
     }
   }
 
+  async getRecipeWithoutViewsPlusOne(req, res) {
+    try {
+      const { _id } = req.query;
+      const recipes = await Recipe.find({ _id }).populate({
+        path: "comments",
+        populate: {
+          path: "user_id",
+        },
+      });
+
+      res.json(...recipes);
+    } catch (e) {
+      return res.status(400).json({
+        message: e.message,
+      });
+    }
+  }
+
   async getRecipeWithoutCookBook(req, res) {
     try {
       const { id } = req.user;
@@ -199,11 +217,13 @@ class RecipeController {
     try {
       const PAGE_SIZE = 12;
       const page = parseInt(req.query.page || "0");
-      const { timeRange, search, sort } = req.query;
-
+      const { id } = req.user;
+      const { type, timeRange, search, sort } = req.query;
       const { recipe, total } = await recipeService.getFilteredRecipes(
+        type,
         timeRange,
         search,
+        id,
         sort,
         page,
         PAGE_SIZE

@@ -17,6 +17,10 @@ router.get(RecipeRoutes.getAllRecipes, controller.getAllRecipes);
 router.get(RecipeRoutes.getUserRecipes, auth, controller.getUserRecipes);
 router.get(RecipeRoutes.get, controller.getRecipe);
 router.get(
+  RecipeRoutes.getRecipeWithoutViewsPlusOne,
+  controller.getRecipeWithoutViewsPlusOne
+);
+router.get(
   RecipeRoutes.getRecipeWithoutCookbook,
   auth,
   controller.getRecipeWithoutCookBook

@@ -15,7 +15,7 @@ module.exports = function (req, res, next) {
       return res.status(403).json({ message: "User not authorized" });
     }
     req.user = jwt.verify(token, process.env.JWT_SECRET);
-    if (req.user.user_status === ("blocked" || "deleted")) {
+    if (req.user.user_status === "deleted") {
       return res
         .status(403)
         .json({ message: `User ${req.user.user_status}, contact the admin` });

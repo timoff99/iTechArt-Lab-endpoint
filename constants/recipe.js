@@ -4,6 +4,7 @@ const RecipeRoutes = {
   getAllRecipes: "/get-all",
   getUserRecipes: "/get-user-recipes",
   get: "/get",
+  getRecipeWithoutViewsPlusOne: "/get-recipe-without-views-plus-one",
   getRecipeWithoutCookbook: "/get-recipe-without-cookbook",
   getFilteredRecipes: "/get-filtered-recipes",
   getRecipeStatistics: "/get-recipe-statistics",

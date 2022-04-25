@@ -101,6 +101,29 @@ class CookBookService {
           total = await CookBook.countDocuments({
             user_id: { $exists: true, $nin: [id] },
           });
+        } else if (type.includes("my-favorite-cookbooks")) {
+          let myFavoriteCookbooks;
+          if (search[0]) {
+            myFavoriteCookbooks = await CookBook.find({
+              title: { $regex: search[0], $options: "i" },
+              likes: { $exists: true, $in: [id] },
+            })
+              .skip(page * PAGE_SIZE)
+              .limit(PAGE_SIZE)
+              .populate("comments");
+          } else {
+            myFavoriteCookbooks = await CookBook.find({
+              likes: { $exists: true, $in: [id] },
+            })
+              .skip(page * PAGE_SIZE)
+              .limit(PAGE_SIZE)
+              .populate("comments");
+          }
+
+          sorted = myFavoriteCookbooks.sort(compareSort);
+          total = await CookBook.countDocuments({
+            likes: { $exists: true, $in: [id] },
+          });
         } else {
           let cookBook;
           if (search[0]) {
